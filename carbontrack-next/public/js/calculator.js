@@ -2,7 +2,12 @@
    CarbonTrack Detailed Calculator Script
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initCarbonTrackCalculator() {
+    const calculatorRoot = document.getElementById('energy-rows-container');
+    if (!calculatorRoot || calculatorRoot.getAttribute('data-ct-calc-init') === '1') {
+        return;
+    }
+    calculatorRoot.setAttribute('data-ct-calc-init', '1');
 
     // Load Supabase credentials from centralized config (js/config.js)
     const SUPABASE_URL = window.CARBONTRACK_CONFIG?.SUPABASE_URL || "";
@@ -1269,11 +1274,13 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================
        7. Button Handlers
        ========================================== */
-    btnAddVehicle.addEventListener('click', (e) => {
-        e.preventDefault();
-        createVehicleRow('car', 'petrol', 1, 0, 'institute-owned');
-        showToastMsg('Added new vehicle row.', 'success');
-    });
+    if (btnAddVehicle) {
+        btnAddVehicle.addEventListener('click', (e) => {
+            e.preventDefault();
+            createVehicleRow('car', 'petrol', 1, 0, 'institute-owned');
+            showToastMsg('Added new vehicle row.', 'success');
+        });
+    }
 
     if (btnCalculateVehicles) {
         btnCalculateVehicles.addEventListener('click', (e) => {
@@ -1285,17 +1292,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    btnAddEnergy.addEventListener('click', (e) => {
-        e.preventDefault();
-        createEnergyRow('purchased-grid', 0);
-        showToastMsg('Added new energy consumption row.', 'success');
-    });
+    if (btnAddEnergy) {
+        btnAddEnergy.addEventListener('click', (e) => {
+            e.preventDefault();
+            createEnergyRow('purchased-grid', 0);
+            showToastMsg('Added new energy consumption row.', 'success');
+        });
+    }
 
-    btnAddGenerator.addEventListener('click', (e) => {
-        e.preventDefault();
-        createGeneratorRow('Admin Block', 0);
-        showToastMsg('Added new generator consumption row.', 'success');
-    });
+    if (btnAddGenerator) {
+        btnAddGenerator.addEventListener('click', (e) => {
+            e.preventDefault();
+            createGeneratorRow('Admin Block', 0);
+            showToastMsg('Added new generator consumption row.', 'success');
+        });
+    }
 
     if (btnCalculateGenerator) {
         btnCalculateGenerator.addEventListener('click', (e) => {
@@ -1305,49 +1316,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    btnAddLpg.addEventListener('click', (e) => {
-        e.preventDefault();
-        createLpgRow('girls-hostel-mess', 0);
-        showToastMsg('Added new LPG weight row.', 'success');
-    });
+    if (btnAddLpg) {
+        btnAddLpg.addEventListener('click', (e) => {
+            e.preventDefault();
+            createLpgRow('girls-hostel-mess', 0);
+            showToastMsg('Added new LPG weight row.', 'success');
+        });
+    }
 
-    btnAddPaper.addEventListener('click', (e) => {
-        e.preventDefault();
-        createPaperRow('standard-a4', 0, 'exams');
-        showToastMsg('Added new paper quantity row.', 'success');
-    });
+    if (btnAddPaper) {
+        btnAddPaper.addEventListener('click', (e) => {
+            e.preventDefault();
+            createPaperRow('standard-a4', 0, 'exams');
+            showToastMsg('Added new paper quantity row.', 'success');
+        });
+    }
 
-    btnAddTree.addEventListener('click', (e) => {
-        e.preventDefault();
-        createTreeRow('neem', 0, '');
-        showToastMsg('Added new tree plantation row.', 'success');
-    });
+    if (btnAddTree) {
+        btnAddTree.addEventListener('click', (e) => {
+            e.preventDefault();
+            createTreeRow('neem', 0, '');
+            showToastMsg('Added new tree plantation row.', 'success');
+        });
+    }
 
-    btnAddSolar.addEventListener('click', (e) => {
-        e.preventDefault();
-        createSolarRow('girls-hostel', 'geyser', 0);
-        showToastMsg('Added new solar installation row.', 'success');
-    });
+    if (btnAddSolar) {
+        btnAddSolar.addEventListener('click', (e) => {
+            e.preventDefault();
+            createSolarRow('girls-hostel', 'geyser', 0);
+            showToastMsg('Added new solar installation row.', 'success');
+        });
+    }
 
-    btnAddWaste.addEventListener('click', (e) => {
-        e.preventDefault();
-        createWasteRow('paper', 0, '');
-        showToastMsg('Added new waste recycling row.', 'success');
-    });
+    if (btnAddWaste) {
+        btnAddWaste.addEventListener('click', (e) => {
+            e.preventDefault();
+            createWasteRow('paper', 0, '');
+            showToastMsg('Added new waste recycling row.', 'success');
+        });
+    }
 
-    document.getElementById('btn-calculate-energy').addEventListener('click', (e) => {
-        e.preventDefault();
-        calculateSummary();
-        showToastMsg('Energy calculations updated.', 'success');
-    });
+    const btnCalculateEnergy = document.getElementById('btn-calculate-energy');
+    if (btnCalculateEnergy) {
+        btnCalculateEnergy.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateSummary();
+            showToastMsg('Energy calculations updated.', 'success');
+        });
+    }
 
-    document.getElementById('btn-reset-energy').addEventListener('click', (e) => {
-        e.preventDefault();
-        energyContainer.innerHTML = '';
-        createEnergyRow('purchased-grid', 0);
-        calculateSummary();
-        showToastMsg('Energy inputs reset.', 'info');
-    });
+    const btnResetEnergy = document.getElementById('btn-reset-energy');
+    if (btnResetEnergy) {
+        btnResetEnergy.addEventListener('click', (e) => {
+            e.preventDefault();
+            energyContainer.innerHTML = '';
+            createEnergyRow('purchased-grid', 0);
+            calculateSummary();
+            showToastMsg('Energy inputs reset.', 'info');
+        });
+    }
 
     if (btnCalculateLpg) {
         btnCalculateLpg.addEventListener('click', (e) => {
@@ -1359,11 +1386,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.getElementById('btn-calculate-paper').addEventListener('click', (e) => {
-        e.preventDefault();
-        calculateSummary();
-        showToastMsg('Paper emissions updated.', 'success');
-    });
+    const btnCalculatePaper = document.getElementById('btn-calculate-paper');
+    if (btnCalculatePaper) {
+        btnCalculatePaper.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateSummary();
+            showToastMsg('Paper emissions updated.', 'success');
+        });
+    }
 
     if (btnCalculateSolar) {
         btnCalculateSolar.addEventListener('click', (e) => {
@@ -1385,17 +1415,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.getElementById('btn-calculate-waste').addEventListener('click', (e) => {
-        e.preventDefault();
-        calculateAll();
-        showToastMsg('Waste recycling offsets calculated.', 'success');
-    });
+    const btnCalculateWaste = document.getElementById('btn-calculate-waste');
+    if (btnCalculateWaste) {
+        btnCalculateWaste.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateAll();
+            showToastMsg('Waste recycling offsets calculated.', 'success');
+        });
+    }
 
-    document.getElementById('btn-recalculate-all').addEventListener('click', (e) => {
-        e.preventDefault();
-        calculateAll();
-        showToastMsg('Complete carbon model re-calculated successfully.', 'success');
-    });
+    const btnRecalculateAll = document.getElementById('btn-recalculate-all');
+    if (btnRecalculateAll) {
+        btnRecalculateAll.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateAll();
+            showToastMsg('Complete carbon model re-calculated successfully.', 'success');
+        });
+    }
 
     const btnCalculateFinal = document.getElementById('btn-calculate-final');
     if (btnCalculateFinal) {
@@ -1467,15 +1503,21 @@ document.addEventListener('DOMContentLoaded', () => {
         showToastMsg(`Vehicle emissions exported to ${format.toUpperCase()}.`, 'success');
     }
 
-    document.getElementById('btn-export-vehicle-csv').addEventListener('click', (e) => {
-        e.preventDefault();
-        exportVehicleData('csv');
-    });
+    const btnExportVehicleCsv = document.getElementById('btn-export-vehicle-csv');
+    if (btnExportVehicleCsv) {
+        btnExportVehicleCsv.addEventListener('click', (e) => {
+            e.preventDefault();
+            exportVehicleData('csv');
+        });
+    }
 
-    document.getElementById('btn-export-vehicle-excel').addEventListener('click', (e) => {
-        e.preventDefault();
-        exportVehicleData('xls'); // TSV renamed as xls
-    });
+    const btnExportVehicleExcel = document.getElementById('btn-export-vehicle-excel');
+    if (btnExportVehicleExcel) {
+        btnExportVehicleExcel.addEventListener('click', (e) => {
+            e.preventDefault();
+            exportVehicleData('xls'); // TSV renamed as xls
+        });
+    }
 
     // Summary Report Export
     const btnExportFullReport = document.getElementById('btn-export-full-report');
@@ -1495,15 +1537,31 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================
        9. Initialization
        ========================================== */
-    // Insert initial rows on load
-    createVehicleRow('car', 'petrol', 1, 10, 'institute-owned');
-    createEnergyRow('purchased-grid', 12000);
-    createGeneratorRow('Admin Block', 2.5);
-    createLpgRow('girls-hostel-mess', 2.5);
-    createPaperRow('standard-a4', 15000, 'exams');
-    createSolarRow('girls-hostel', 'geyser', 2500);
-    createTreeRow('neem', 50, 'Main Garden');
-    createWasteRow('paper', 1200, 'Main Admin Office');
+    // Insert initial rows on load (only when tables are empty)
+    if (vehicleContainer && vehicleContainer.children.length === 0) {
+        createVehicleRow('car', 'petrol', 1, 10, 'institute-owned');
+    }
+    if (energyContainer && energyContainer.children.length === 0) {
+        createEnergyRow('purchased-grid', 12000);
+    }
+    if (generatorContainer && generatorContainer.children.length === 0) {
+        createGeneratorRow('Admin Block', 2.5);
+    }
+    if (lpgContainer && lpgContainer.children.length === 0) {
+        createLpgRow('girls-hostel-mess', 2.5);
+    }
+    if (paperContainer && paperContainer.children.length === 0) {
+        createPaperRow('standard-a4', 15000, 'exams');
+    }
+    if (solarContainer && solarContainer.children.length === 0) {
+        createSolarRow('girls-hostel', 'geyser', 2500);
+    }
+    if (treesContainer && treesContainer.children.length === 0) {
+        createTreeRow('neem', 50, 'Main Garden');
+    }
+    if (wasteContainer && wasteContainer.children.length === 0) {
+        createWasteRow('paper', 1200, 'Main Admin Office');
+    }
 
     // Initial run
     calculateAll();
@@ -1538,7 +1596,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             e.preventDefault();
             logoInput.value = '';
-            logoPreviewImg.src = '';
+            logoPreviewImg.removeAttribute('src');
             logoPreviewBox.style.display = 'none';
             logoPlaceholder.style.display = 'flex';
             showToastMsg('Logo removed.', 'info');
@@ -1572,7 +1630,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             e.preventDefault();
             photoInput.value = '';
-            photoPreviewImg.src = '';
+            photoPreviewImg.removeAttribute('src');
             photoPreviewBox.style.display = 'none';
             photoPlaceholder.style.display = 'flex';
             showToastMsg('College photo removed.', 'info');
@@ -1699,7 +1757,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             e.preventDefault();
             solarPhotoInput.value = '';
-            solarPreviewImg.src = '';
+            solarPreviewImg.removeAttribute('src');
             solarPreviewBox.style.display = 'none';
             solarPlaceholder.style.display = 'flex';
             showToastMsg('Solar photo removed.', 'info');
@@ -1734,7 +1792,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             e.preventDefault();
             treesPhotoInput.value = '';
-            treesPreviewImg.src = '';
+            treesPreviewImg.removeAttribute('src');
             treesPreviewBox.style.display = 'none';
             treesPlaceholder.style.display = 'flex';
             showToastMsg('Trees photo removed.', 'info');
@@ -1812,4 +1870,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sectionElements.forEach(sec => observer.observe(sec));
         }
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initCarbonTrackCalculator);
+if (document.readyState !== 'loading') {
+    initCarbonTrackCalculator();
+}

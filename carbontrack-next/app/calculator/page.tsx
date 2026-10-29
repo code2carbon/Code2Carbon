@@ -5,47 +5,56 @@ import Link from 'next/link';
 
 export default function CalculatorPage() {
   useEffect(() => {
-    // Load external scripts needed by calculator
+    let cancelled = false;
+
     const loadScript = (src: string): Promise<void> => {
       return new Promise((resolve) => {
-        const old = document.querySelector(`script[data-ct-src="${src}"]`);
-        if (old) old.remove();
+        const existing = document.querySelector(`script[data-ct-src="${src}"]`) as HTMLScriptElement | null;
+        if (existing) {
+          if (existing.getAttribute('data-ct-loaded') === '1') {
+            resolve();
+            return;
+          }
+          existing.addEventListener('load', () => resolve(), { once: true });
+          existing.addEventListener('error', () => resolve(), { once: true });
+          return;
+        }
         const script = document.createElement('script');
         script.src = src;
         script.setAttribute('data-ct-src', src);
-        script.onload = () => resolve();
+        script.onload = () => {
+          script.setAttribute('data-ct-loaded', '1');
+          resolve();
+        };
         script.onerror = () => resolve();
         document.body.appendChild(script);
       });
     };
 
-    const fireDCL = () =>
-      document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
-
-    // Set up CARBONTRACK_CONFIG globally so calculator.js can access it
     (window as any).CARBONTRACK_CONFIG = {
       SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
       SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
     };
 
-    // Load scripts in correct dependency order (same as original HTML)
     const loadAll = async () => {
       await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
       await loadScript('/js/script.js');
-      fireDCL(); // initialize script.js (navbar, scroll reveal, planner, etc.)
       await loadScript('/js/calculator.js');
-      fireDCL(); // initialize calculator.js (tables, forms, calculations)
       await loadScript('/js/report-generator.js');
-      fireDCL(); // initialize report-generator.js
       await loadScript('/js/chatbot.js');
-      fireDCL(); // initialize chatbot.js (injects FAB + drawer)
+      if (cancelled) return;
+      // Single DOMContentLoaded for scripts that only listen for it (e.g. script.js).
+      // calculator.js / report-generator.js / chatbot.js self-init when the document is already ready.
+      document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
     };
 
     loadAll();
 
     return () => {
-      document.querySelectorAll('script[data-ct-src]').forEach(el => el.remove());
+      cancelled = true;
+      const energyRoot = document.getElementById('energy-rows-container');
+      energyRoot?.removeAttribute('data-ct-calc-init');
     };
   }, []);
 
@@ -188,7 +197,7 @@ export default function CalculatorPage() {
                           <span className="upload-text">Choose Logo</span>
                         </div>
                         <div className="logo-preview-container" id="logo-preview-box" style={{display: 'none'}}>
-                          <img id="logo-preview-img" src="" alt="Logo Preview" />
+                          <img id="logo-preview-img" alt="Logo Preview" />
                           <button className="remove-preview-btn" id="btn-remove-logo" type="button">&times;</button>
                         </div>
                       </div>
@@ -202,7 +211,7 @@ export default function CalculatorPage() {
                           <span className="upload-text">Choose Photo</span>
                         </div>
                         <div className="photo-preview-container" id="photo-preview-box" style={{display: 'none'}}>
-                          <img id="photo-preview-img" src="" alt="College Photo Preview" />
+                          <img id="photo-preview-img" alt="College Photo Preview" />
                           <button className="remove-preview-btn" id="btn-remove-photo" type="button">&times;</button>
                         </div>
                       </div>
@@ -619,7 +628,7 @@ export default function CalculatorPage() {
                         <span className="upload-text">Choose Solar Panel Photo</span>
                       </div>
                       <div className="photo-preview-container" id="solar-preview-box" style={{display:'none',padding:'10px',background:'rgba(0,0,0,0.02)',borderRadius:'8px',border:'1px dashed rgba(0,0,0,0.15)',alignItems:'center',justifyContent:'center',position:'relative'}}>
-                        <img id="solar-preview-img" src="" alt="Solar Panel Preview" style={{maxHeight:'100px',borderRadius:'8px'}} />
+                        <img id="solar-preview-img" alt="Solar Panel Preview" style={{maxHeight:'100px',borderRadius:'8px'}} />
                         <button className="remove-preview-btn" id="btn-remove-solar-photo" type="button" style={{position:'absolute',top:'5px',right:'5px',background:'rgba(239, 68, 68, 0.8)',border:'none',fontSize:'1.2rem',cursor:'pointer',color:'white',fontWeight:'bold',width:'24px',height:'24px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}>&times;</button>
                       </div>
                     </div>
@@ -682,7 +691,7 @@ export default function CalculatorPage() {
                             <span className="upload-text">Choose Trees Photo</span>
                           </div>
                           <div className="photo-preview-container" id="trees-preview-box" style={{display:'none',padding:'10px',background:'rgba(0,0,0,0.02)',borderRadius:'8px',border:'1px dashed rgba(0,0,0,0.15)',alignItems:'center',justifyContent:'center',position:'relative'}}>
-                            <img id="trees-preview-img" src="" alt="Trees Preview" style={{maxHeight:'100px',borderRadius:'8px'}} />
+                            <img id="trees-preview-img" alt="Trees Preview" style={{maxHeight:'100px',borderRadius:'8px'}} />
                             <button className="remove-preview-btn" id="btn-remove-trees-photo" type="button" style={{position:'absolute',top:'5px',right:'5px',background:'rgba(239, 68, 68, 0.8)',border:'none',fontSize:'1.2rem',cursor:'pointer',color:'white',fontWeight:'bold',width:'24px',height:'24px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}>&times;</button>
                           </div>
                         </div>
@@ -789,6 +798,7 @@ export default function CalculatorPage() {
 
                   <div style={{marginTop:'20px',display:'flex',justifyContent:'center',gap:'14px',flexWrap:'wrap'}}>
                     <button className="btn btn-primary" id="btn-calculate-final">Calculate Net Footprint</button>
+                    <button className="btn btn-secondary" id="btn-recalculate-all" type="button">Recalculate All</button>
                     <button className="btn btn-secondary" id="btn-view-summary-report" style={{background:'#3b82f6',borderColor:'#2563eb',color:'#ffffff',fontWeight:700}}>👁️ View Summary Report (New Tab)</button>
                     <button className="btn btn-primary" id="btn-direct-download-pdf" style={{background:'#10b981',borderColor:'#059669',fontWeight:700}}>📥 Download Report (PDF)</button>
                   </div>
