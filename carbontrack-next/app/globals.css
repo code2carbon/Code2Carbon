@@ -1,0 +1,4 @@
+/* Reset Next.js default styles that would conflict with the original carbontrack styles.css */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
