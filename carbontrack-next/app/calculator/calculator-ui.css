@@ -1,0 +1,1461 @@
+/* ==========================================================================
+   CarbonTrack – Calculator Page UI  (v2: SaaS dashboard polish)
+   Every rule is scoped under .calc-page, so nothing here affects the homepage.
+   Layout: one column of section cards; each table row becomes a labelled
+   entry card (fields in a responsive grid). No markup hooks used by
+   calculator.js are changed; this file is presentation only.
+
+   Design notes
+   - Palette: deep forest ink + a single emerald accent. Warm amber marks
+     gross emissions, emerald marks offsets, so colour carries meaning.
+   - One memorable element: the dark "net footprint" summary panel.
+   - Everything else stays quiet: neutral surfaces, hairline borders,
+     restrained shadows, sentence-case labels.
+   - Inline styles in page.tsx are overridden with !important where needed,
+     so page.tsx and calculator.js stay untouched.
+   ========================================================================== */
+
+/* ---------- Local design tokens ---------- */
+.calc-page {
+    --cp-bg: #f4f6f8;
+    --cp-glow: rgba(16, 185, 129, 0.14);
+    --cp-surface: #ffffff;
+    --cp-surface-2: #f8fafb;
+    --cp-border: rgba(15, 23, 42, 0.08);
+    --cp-border-strong: rgba(15, 23, 42, 0.16);
+    --cp-border-accent: rgba(16, 185, 129, 0.45);
+    --cp-ink: #0f1f1a;
+    --cp-text: #334155;
+    --cp-muted: #64748b;
+    --cp-accent: #10b981;
+    --cp-accent-strong: #047857;
+    --cp-accent-soft: rgba(16, 185, 129, 0.1);
+    --cp-ring: rgba(16, 185, 129, 0.24);
+    --cp-warn: #d97706;
+    --cp-warn-soft: rgba(245, 158, 11, 0.1);
+    --cp-danger: #dc2626;
+    --cp-danger-soft: rgba(239, 68, 68, 0.09);
+    --cp-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --cp-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+    --cp-shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 14px 32px rgba(15, 23, 42, 0.09);
+    --cp-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    --cp-gap: 28px;
+
+    background:
+        radial-gradient(1100px 480px at 50% -80px, var(--cp-glow), transparent 70%),
+        var(--cp-bg);
+    background-repeat: no-repeat, no-repeat;
+    color: var(--cp-text);
+}
+
+body.dark-theme .calc-page {
+    --cp-bg: #0a0f1a;
+    --cp-glow: rgba(52, 211, 153, 0.12);
+    --cp-surface: #111826;
+    --cp-surface-2: #0d1420;
+    --cp-border: rgba(255, 255, 255, 0.08);
+    --cp-border-strong: rgba(255, 255, 255, 0.16);
+    --cp-border-accent: rgba(52, 211, 153, 0.45);
+    --cp-ink: #f1f5f9;
+    --cp-text: #cbd5e1;
+    --cp-muted: #94a3b8;
+    --cp-accent: #34d399;
+    --cp-accent-strong: #6ee7b7;
+    --cp-accent-soft: rgba(52, 211, 153, 0.12);
+    --cp-ring: rgba(52, 211, 153, 0.28);
+    --cp-warn: #fbbf24;
+    --cp-warn-soft: rgba(251, 191, 36, 0.1);
+    --cp-danger: #f87171;
+    --cp-danger-soft: rgba(248, 113, 113, 0.12);
+    --cp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --cp-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px rgba(0, 0, 0, 0.32);
+    --cp-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 36px rgba(0, 0, 0, 0.4);
+    --cp-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+/* Normalise colours that page.tsx sets inline via the global theme variables,
+   so text stays readable in both light and dark mode. */
+.calc-page [style*="var(--dark)"] {
+    color: var(--cp-ink) !important;
+}
+
+.calc-page [style*="var(--text-secondary)"],
+.calc-page [style*="var(--text-muted)"] {
+    color: var(--cp-muted) !important;
+}
+
+/* ---------- Hero ---------- */
+.calc-page .calculator-hero-section {
+    padding: 132px 0 52px;
+    background: transparent;
+}
+
+.calc-page .calculator-hero-section .section-label {
+    display: inline-block;
+    padding: 6px 14px;
+    margin-bottom: 18px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--cp-accent-strong);
+    background: var(--cp-accent-soft);
+    border: 1px solid var(--cp-border-accent);
+    border-radius: 999px;
+}
+
+.calc-page .calculator-hero-section .section-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--cp-ink);
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.calc-page .calculator-hero-section .title-bar {
+    width: 56px;
+    height: 4px;
+    margin: 20px auto 22px;
+    border-radius: 999px;
+    background: var(--cp-accent);
+}
+
+.calc-page .calculator-hero-section .section-desc {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--cp-muted);
+}
+
+/* ---------- Page content + vertical stack ---------- */
+.calc-page .calculator-page-content {
+    padding: 36px 0 104px;
+}
+
+.calc-page .calculator-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cp-gap);
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+/* Cards are visible immediately (no fade/slide-in) */
+.calc-page .scroll-reveal,
+.calc-page .scroll-reveal.revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
+/* ---------- Section cards ---------- */
+.calc-page .calc-card {
+    background:
+        linear-gradient(var(--cp-accent), var(--cp-accent)) top left / 100% 3px no-repeat,
+        var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--cp-shadow);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.calc-page .calc-card:hover {
+    transform: none;
+    box-shadow: var(--cp-shadow-hover);
+    border-color: var(--cp-border-strong);
+}
+
+.calc-page .calc-card:hover .header-icon-box {
+    transform: none;
+}
+
+/* Card header: icon + title/description (+ actions) then a divider */
+.calc-page .calc-card-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 26px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--cp-border);
+}
+
+.calc-page .calc-card-header .header-titles {
+    flex: 1 1 280px;
+    min-width: 0;
+}
+
+.calc-page .calc-card-header .header-titles h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--cp-ink);
+    margin-bottom: 6px;
+}
+
+.calc-page .calc-card-header .header-titles p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--cp-muted);
+    margin: 0;
+    max-width: 64ch;
+}
+
+.calc-page .calc-card-header .header-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+/* Icon tiles: soft tint + matching ring, one colour per category */
+.calc-page .header-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    box-shadow: none;
+    border: 1px solid transparent;
+}
+
+.calc-page .header-icon-box svg {
+    width: 26px;
+    height: 26px;
+}
+
+.calc-page .header-icon-box.bg-green {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.25);
+}
+
+.calc-page .header-icon-box.bg-yellow {
+    background: rgba(234, 179, 8, 0.14);
+    color: #a16207;
+    border-color: rgba(234, 179, 8, 0.3);
+}
+
+.calc-page .header-icon-box.bg-orange {
+    background: rgba(249, 115, 22, 0.12);
+    color: #c2410c;
+    border-color: rgba(249, 115, 22, 0.28);
+}
+
+.calc-page .header-icon-box.bg-red {
+    background: rgba(239, 68, 68, 0.11);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.26);
+}
+
+.calc-page .header-icon-box.bg-purple {
+    background: rgba(139, 92, 246, 0.12);
+    color: #7c3aed;
+    border-color: rgba(139, 92, 246, 0.28);
+}
+
+.calc-page .header-icon-box.bg-teal {
+    background: rgba(20, 184, 166, 0.12);
+    color: #0f766e;
+    border-color: rgba(20, 184, 166, 0.28);
+}
+
+.calc-page .header-icon-box.bg-blue {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+    border-color: rgba(59, 130, 246, 0.28);
+}
+
+.calc-page .header-icon-box.bg-dark {
+    background: rgba(100, 116, 139, 0.14);
+    color: #475569;
+    border-color: rgba(100, 116, 139, 0.3);
+}
+
+body.dark-theme .calc-page .header-icon-box.bg-green { color: #6ee7b7; }
+body.dark-theme .calc-page .header-icon-box.bg-yellow { color: #fde047; }
+body.dark-theme .calc-page .header-icon-box.bg-orange { color: #fdba74; }
+body.dark-theme .calc-page .header-icon-box.bg-red { color: #fca5a5; }
+body.dark-theme .calc-page .header-icon-box.bg-purple { color: #c4b5fd; }
+body.dark-theme .calc-page .header-icon-box.bg-teal { color: #5eead4; }
+body.dark-theme .calc-page .header-icon-box.bg-blue { color: #93c5fd; }
+body.dark-theme .calc-page .header-icon-box.bg-dark { color: #cbd5e1; }
+
+/* ---------- Scope badges (used in card titles, table cells, JS-built rows) ---------- */
+.calc-page .init-scope-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    line-height: 1.3;
+    white-space: nowrap;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.calc-page .init-scope-badge.scope1 {
+    color: #be123c;
+    background: rgba(244, 63, 94, 0.1);
+    border-color: rgba(244, 63, 94, 0.25);
+}
+
+.calc-page .init-scope-badge.scope2 {
+    color: #1d4ed8;
+    background: rgba(59, 130, 246, 0.11);
+    border-color: rgba(59, 130, 246, 0.26);
+}
+
+.calc-page .init-scope-badge.scope3 {
+    color: #6d28d9;
+    background: rgba(139, 92, 246, 0.11);
+    border-color: rgba(139, 92, 246, 0.26);
+}
+
+.calc-page .init-scope-badge.offset {
+    color: #047857;
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+body.dark-theme .calc-page .init-scope-badge.scope1 { color: #fda4af; }
+body.dark-theme .calc-page .init-scope-badge.scope2 { color: #93c5fd; }
+body.dark-theme .calc-page .init-scope-badge.scope3 { color: #c4b5fd; }
+body.dark-theme .calc-page .init-scope-badge.offset { color: #6ee7b7; }
+
+/* Sub-heading inside a card */
+.calc-page .nested-form-section {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+.calc-page .nested-form-section:hover {
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.calc-page .nested-form-section .nested-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cp-ink);
+    margin-bottom: 4px;
+}
+
+.calc-page .nested-form-section .nested-title::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--cp-accent);
+    flex-shrink: 0;
+}
+
+.calc-page .nested-form-section .nested-subtitle {
+    font-size: 0.88rem;
+    color: var(--cp-muted);
+    margin-bottom: 0;
+    padding-left: 14px;
+}
+
+/* ---------- Institution details ---------- */
+.calc-page .org-details-card {
+    padding: 32px !important;
+    border-radius: 20px !important;
+}
+
+.calc-page .org-details-header {
+    margin-bottom: 26px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--cp-border);
+}
+
+.calc-page .org-details-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.calc-page .org-details-title-row h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--cp-ink);
+    margin: 0;
+}
+
+.calc-page .org-details-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    color: var(--cp-accent-strong);
+    background: var(--cp-accent-soft);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.calc-page .org-details-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.calc-page .org-details-subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--cp-muted);
+}
+
+.calc-page .calculator-form-grid {
+    gap: 22px 24px;
+}
+
+/* ---------- Form fields ---------- */
+.calc-page .form-control label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    text-transform: none;
+    color: var(--cp-text);
+}
+
+.calc-page input[type="text"],
+.calc-page input[type="email"],
+.calc-page input[type="url"],
+.calc-page input[type="number"],
+.calc-page select {
+    width: 100%;
+    height: 44px;
+    padding: 10px 14px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: var(--cp-ink);
+    background-color: var(--cp-surface);
+    border: 1px solid var(--cp-border-strong);
+    border-radius: 10px;
+    box-shadow: var(--cp-shadow-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.calc-page input::placeholder {
+    color: var(--cp-muted);
+    opacity: 0.75;
+}
+
+.calc-page input[type="text"]:hover,
+.calc-page input[type="email"]:hover,
+.calc-page input[type="url"]:hover,
+.calc-page input[type="number"]:hover,
+.calc-page select:hover {
+    border-color: var(--cp-border-accent);
+}
+
+.calc-page input[type="text"]:focus,
+.calc-page input[type="email"]:focus,
+.calc-page input[type="url"]:focus,
+.calc-page input[type="number"]:focus,
+.calc-page select:focus {
+    outline: none;
+    border-color: var(--cp-accent);
+    box-shadow: 0 0 0 4px var(--cp-ring);
+}
+
+/* Custom dropdown arrow */
+.calc-page select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 38px;
+    background-image: var(--cp-select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    background-size: 15px;
+    cursor: pointer;
+}
+
+.calc-page select option {
+    color: #0f172a;
+    background: #ffffff;
+}
+
+/* Read-only (auto-filled) fields look settled, not editable */
+.calc-page .readonly-input,
+.calc-page input[readonly] {
+    color: var(--cp-muted);
+    background-color: var(--cp-surface-2);
+    border-style: dashed;
+    box-shadow: none;
+    cursor: default;
+}
+
+.calc-page input[readonly]:hover,
+.calc-page input[readonly]:focus {
+    border-color: var(--cp-border-strong);
+    box-shadow: none;
+}
+
+/* Upload boxes: keep each control to one grid cell (avoids tablet overflow) */
+.calc-page .form-control.file-upload-control {
+    grid-column: auto;
+}
+
+.calc-page .custom-file-upload {
+    min-height: 110px;
+    height: 110px;
+    border-radius: 14px;
+    border: 1.5px dashed var(--cp-border-strong);
+    background: var(--cp-surface-2);
+    color: var(--cp-muted);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.calc-page .custom-file-upload:hover {
+    border-color: var(--cp-accent);
+    background: var(--cp-accent-soft);
+}
+
+.calc-page .custom-file-upload .upload-text {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cp-text);
+}
+
+.calc-page .logo-preview-container,
+.calc-page .photo-preview-container,
+.calc-page .layout-preview-container {
+    border-radius: 12px;
+}
+
+.calc-page .remove-preview-btn:hover {
+    filter: brightness(1.1);
+}
+
+/* ---------- Sub-navigation ---------- */
+.calc-page .calculator-subnav-wrapper {
+    top: 72px;
+    margin-bottom: 0;
+    padding: 8px 0;
+    z-index: 40;
+}
+
+.calc-page .calculator-subnav {
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 16px;
+    overflow-x: auto;
+    background: color-mix(in srgb, var(--cp-surface) 88%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--cp-border);
+    box-shadow: var(--cp-shadow);
+    scrollbar-width: none;
+}
+
+.calc-page .calculator-subnav::-webkit-scrollbar {
+    display: none;
+}
+
+.calc-page .subnav-link {
+    flex-shrink: 0;
+    padding: 9px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--cp-muted);
+    border-radius: 11px;
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.calc-page .subnav-link:hover {
+    color: var(--cp-ink);
+    background: var(--cp-accent-soft);
+}
+
+.calc-page .subnav-link.active {
+    color: #ffffff;
+    background: var(--cp-accent-strong);
+    box-shadow: 0 2px 8px rgba(4, 120, 87, 0.35);
+}
+
+body.dark-theme .calc-page .subnav-link.active {
+    color: #052e22;
+    background: var(--cp-accent);
+    box-shadow: 0 2px 10px rgba(52, 211, 153, 0.3);
+}
+
+/* ---------- Buttons ---------- */
+.calc-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    padding: 11px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.calc-page .btn:hover,
+.calc-page .btn-add:hover,
+.calc-page .btn-export:hover,
+.calc-page .btn-primary:hover,
+.calc-page .btn-secondary:hover {
+    transform: none;
+}
+
+.calc-page .btn:active {
+    transform: translateY(1px);
+}
+
+.calc-page .btn-primary {
+    color: #ffffff;
+    background: var(--cp-accent-strong);
+    border: 1px solid var(--cp-accent-strong);
+    box-shadow: 0 1px 2px rgba(4, 120, 87, 0.3), 0 4px 12px rgba(4, 120, 87, 0.22);
+}
+
+.calc-page .btn-primary:hover {
+    background: #065f46;
+    border-color: #065f46;
+    box-shadow: 0 2px 4px rgba(4, 120, 87, 0.35), 0 8px 18px rgba(4, 120, 87, 0.28);
+}
+
+body.dark-theme .calc-page .btn-primary {
+    color: #052e22;
+    background: var(--cp-accent);
+    border-color: var(--cp-accent);
+    box-shadow: 0 4px 14px rgba(52, 211, 153, 0.25);
+}
+
+body.dark-theme .calc-page .btn-primary:hover {
+    background: #6ee7b7;
+    border-color: #6ee7b7;
+}
+
+.calc-page .btn-secondary {
+    color: var(--cp-ink);
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border-strong);
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page .btn-secondary:hover {
+    border-color: var(--cp-border-accent);
+    background: var(--cp-accent-soft);
+}
+
+.calc-page .btn-add {
+    color: var(--cp-accent-strong);
+    background: var(--cp-accent-soft);
+    border: 1.5px dashed var(--cp-border-accent);
+}
+
+.calc-page .btn-add:hover {
+    background: rgba(16, 185, 129, 0.18);
+    border-style: solid;
+}
+
+.calc-page .btn-export {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    color: var(--cp-text);
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border-strong);
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page .btn-export:hover {
+    color: var(--cp-accent-strong);
+    border-color: var(--cp-border-accent);
+}
+
+.calc-page .form-actions-row {
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--cp-border);
+}
+
+/* ---------- Tables -> stacked entry cards ---------- */
+.calc-page .table-container {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+.calc-page .calc-table,
+.calc-page .calc-table tbody {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+.calc-page .calc-table tbody {
+    counter-reset: entry;
+}
+
+/* Column headers are replaced by per-field labels; keep them for assistive tech */
+.calc-page .calc-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.calc-page .calc-table tbody tr {
+    counter-increment: entry;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 18px 20px;
+    position: relative;
+    padding: 58px 22px 22px;
+    margin-bottom: 16px;
+    background:
+        linear-gradient(var(--cp-border), var(--cp-border)) 0 46px / 100% 1px no-repeat,
+        var(--cp-surface-2);
+    border: 1px solid var(--cp-border);
+    border-radius: 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Entry label in the card's header band */
+.calc-page .calc-table tbody tr::before {
+    content: "Entry " counter(entry);
+    position: absolute;
+    top: 14px;
+    left: 22px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 20px;
+    color: var(--cp-muted);
+}
+
+.calc-page .calc-table tbody tr:hover {
+    background:
+        linear-gradient(var(--cp-border), var(--cp-border)) 0 46px / 100% 1px no-repeat,
+        var(--cp-surface-2);
+    border-color: var(--cp-border-accent);
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page .calc-table td {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 7px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    font-size: 0.95rem;
+    color: var(--cp-ink);
+}
+
+/* Field label above each value */
+.calc-page .calc-table td::before {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.35;
+    text-transform: none;
+    color: var(--cp-muted);
+}
+
+/* Delete button pinned to the entry card's corner */
+.calc-page .calc-table td:last-child {
+    display: block;
+    position: absolute;
+    top: 6px;
+    right: 10px;
+}
+
+.calc-page .calc-table td:last-child::before {
+    display: none;
+}
+
+.calc-page .btn-delete-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: var(--cp-danger);
+    background: var(--cp-danger-soft);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.calc-page .btn-delete-row:hover {
+    transform: none;
+    color: #ffffff;
+    background: #ef4444;
+}
+
+/* Empty state */
+.calc-page .calc-table tbody:empty::before {
+    content: "No entries yet \2014  use the button below to add one.";
+    display: block;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--cp-muted);
+    background: var(--cp-surface-2);
+    border: 1.5px dashed var(--cp-border-strong);
+    border-radius: 14px;
+}
+
+/* Inputs / selects: one consistent size, full width of their grid cell */
+.calc-page .calc-table select,
+.calc-page .calc-table input[type="number"],
+.calc-page .calc-table input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 9px 12px !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+}
+
+.calc-page .calc-table select {
+    padding-right: 36px !important;
+}
+
+/* Override inline widths on the read-only unit boxes */
+.calc-page .calc-table input.energy-unit,
+.calc-page .calc-table input.generator-unit {
+    width: 100% !important;
+    text-align: left !important;
+}
+
+/* Scope badge cell */
+.calc-page .calc-table td.row-scope-col {
+    width: auto;
+    min-width: 0;
+    text-align: left;
+}
+
+.calc-page .calc-table td.row-scope-col .init-scope-badge {
+    align-self: flex-start;
+    padding: 9px 14px;
+    font-size: 0.78rem;
+}
+
+/* Calculated values -> result boxes.
+   Gross emissions carry a warm amber edge; offsets carry an emerald edge. */
+.calc-page .calc-table td.vehicle-day,
+.calc-page .calc-table td.vehicle-month,
+.calc-page .calc-table td.vehicle-year,
+.calc-page .calc-table td.vehicle-year-tons,
+.calc-page .calc-table td.energy-monthly,
+.calc-page .calc-table td.energy-annual,
+.calc-page .calc-table td.generator-monthly,
+.calc-page .calc-table td.generator-annual,
+.calc-page .calc-table td.lpg-monthly,
+.calc-page .calc-table td.lpg-annual,
+.calc-page .calc-table td.solar-result,
+.calc-page .calc-table td.tree-absorption-result,
+.calc-page .calc-table td.waste-result {
+    gap: 5px;
+    padding: 11px 14px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--cp-ink);
+    background: var(--cp-warn-soft);
+    border: 1px solid rgba(245, 158, 11, 0.22);
+    border-left: 3px solid var(--cp-warn);
+    border-radius: 12px;
+}
+
+.calc-page .calc-table td.solar-result,
+.calc-page .calc-table td.tree-absorption-result,
+.calc-page .calc-table td.waste-result {
+    background: var(--cp-accent-soft);
+    border-color: rgba(16, 185, 129, 0.24);
+    border-left: 3px solid var(--cp-accent);
+}
+
+/* First result of a multi-result row starts on its own line */
+.calc-page .calc-table td.vehicle-day,
+.calc-page .calc-table td.energy-monthly,
+.calc-page .calc-table td.generator-monthly,
+.calc-page .calc-table td.lpg-monthly {
+    grid-column-start: 1;
+}
+
+/* ---- Field labels per table (no JS changes needed) ---- */
+.calc-page #vehicle-table td:nth-child(1)::before  { content: "Vehicle Type"; }
+.calc-page #vehicle-table td:nth-child(2)::before  { content: "Fuel Type"; }
+.calc-page #vehicle-table td:nth-child(3)::before  { content: "Ownership"; }
+.calc-page #vehicle-table td:nth-child(4)::before  { content: "Scope"; }
+.calc-page #vehicle-table td:nth-child(5)::before  { content: "Number of Vehicles"; }
+.calc-page #vehicle-table td:nth-child(6)::before  { content: "Avg Distance (km)"; }
+.calc-page #vehicle-table td:nth-child(7)::before  { content: "Emission Factor"; }
+.calc-page #vehicle-table td:nth-child(8)::before  { content: "Emission / Day (kgCO\002082)"; }
+.calc-page #vehicle-table td:nth-child(9)::before  { content: "Emission / Month (kgCO\002082)"; }
+.calc-page #vehicle-table td:nth-child(10)::before { content: "Emission / Year (kgCO\002082)"; }
+.calc-page #vehicle-table td:nth-child(11)::before { content: "Emission / Year (tons CO\002082)"; }
+
+.calc-page #energy-table td:nth-child(1)::before { content: "Energy Type"; }
+.calc-page #energy-table td:nth-child(2)::before { content: "Energy Source"; }
+.calc-page #energy-table td:nth-child(3)::before { content: "Scope"; }
+.calc-page #energy-table td:nth-child(4)::before { content: "Consumption (kWh/month)"; }
+.calc-page #energy-table td:nth-child(5)::before { content: "Unit"; }
+.calc-page #energy-table td:nth-child(6)::before { content: "Emission Factor"; }
+.calc-page #energy-table td:nth-child(7)::before { content: "Monthly Emission (kgCO\002082)"; }
+.calc-page #energy-table td:nth-child(8)::before { content: "Annual Emission (kgCO\002082)"; }
+
+.calc-page #generator-table td:nth-child(1)::before { content: "Generator Type"; }
+.calc-page #generator-table td:nth-child(2)::before { content: "Location"; }
+.calc-page #generator-table td:nth-child(3)::before { content: "Diesel Consumption"; }
+.calc-page #generator-table td:nth-child(4)::before { content: "Unit"; }
+.calc-page #generator-table td:nth-child(5)::before { content: "Emission Factor"; }
+.calc-page #generator-table td:nth-child(6)::before { content: "Monthly Activity (kgCO\002082)"; }
+.calc-page #generator-table td:nth-child(7)::before { content: "Annual Emission (kgCO\002082)"; }
+
+.calc-page #lpg-table td:nth-child(1)::before { content: "Location"; }
+.calc-page #lpg-table td:nth-child(2)::before { content: "Cylinders (per month)"; }
+.calc-page #lpg-table td:nth-child(3)::before { content: "Weight of One Cylinder (kg)"; }
+.calc-page #lpg-table td:nth-child(4)::before { content: "Emission Factor"; }
+.calc-page #lpg-table td:nth-child(5)::before { content: "Monthly Emission (kgCO\002082)"; }
+.calc-page #lpg-table td:nth-child(6)::before { content: "Annual Emission (kgCO\002082)"; }
+
+.calc-page #paper-table td:nth-child(1)::before { content: "Location / Department"; }
+.calc-page #paper-table td:nth-child(2)::before { content: "Paper Consumption (kg/year)"; }
+
+.calc-page #solar-table td:nth-child(1)::before { content: "Location (Building)"; }
+.calc-page #solar-table td:nth-child(2)::before { content: "Usage / Application"; }
+.calc-page #solar-table td:nth-child(3)::before { content: "Panel Capacity (kWh)"; }
+.calc-page #solar-table td:nth-child(4)::before { content: "Emission Factor"; }
+.calc-page #solar-table td:nth-child(5)::before { content: "Avoided Emissions (kgCO\002082 Saved)"; }
+
+.calc-page #trees-table td:nth-child(1)::before { content: "Tree Species"; }
+.calc-page #trees-table td:nth-child(2)::before { content: "Location / Details"; }
+.calc-page #trees-table td:nth-child(3)::before { content: "Number of Trees"; }
+.calc-page #trees-table td:nth-child(4)::before { content: "Absorption Factor (kg/year)"; }
+.calc-page #trees-table td:nth-child(5)::before { content: "Annual Absorption (kgCO\002082)"; }
+
+.calc-page #waste-table td:nth-child(1)::before { content: "Material Type"; }
+.calc-page #waste-table td:nth-child(2)::before { content: "Recycling Facility / Location"; }
+.calc-page #waste-table td:nth-child(3)::before { content: "Quantity Recycled (kg/year)"; }
+.calc-page #waste-table td:nth-child(4)::before { content: "Offset Factor (kgCO\002082/kg)"; }
+.calc-page #waste-table td:nth-child(5)::before { content: "Total Offset (kgCO\002082 Saved)"; }
+
+/* ---------- Result summaries (vehicle / LPG / solar / trees) ----------
+   Inline styles in page.tsx are overridden here. Display is intentionally
+   left alone because calculator.js toggles it. */
+.calc-page .vehicle-results-summary,
+.calc-page .lpg-results-summary,
+.calc-page .solar-results-summary,
+.calc-page .tree-results-summary {
+    --sum-accent: var(--cp-accent);
+    --sum-tint: rgba(16, 185, 129, 0.07);
+    padding: 22px 24px !important;
+    background: linear-gradient(90deg, var(--sum-tint), transparent 55%), var(--cp-surface) !important;
+    border: 1px solid var(--cp-border) !important;
+    border-left: 4px solid var(--sum-accent) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page #lpg-results-summary {
+    --sum-accent: #ef4444;
+    --sum-tint: rgba(239, 68, 68, 0.07);
+}
+
+.calc-page #solar-results-summary {
+    --sum-accent: #f59e0b;
+    --sum-tint: rgba(245, 158, 11, 0.08);
+}
+
+.calc-page #tree-results-summary {
+    --sum-accent: #14b8a6;
+    --sum-tint: rgba(20, 184, 166, 0.08);
+}
+
+.calc-page .vehicle-results-summary > h4,
+.calc-page .lpg-results-summary > h4,
+.calc-page .solar-results-summary > h4,
+.calc-page .tree-results-summary > h4 {
+    margin-bottom: 14px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.005em;
+    color: var(--cp-ink) !important;
+}
+
+/* Stat tiles in a grid (vehicle / LPG) */
+.calc-page .vehicle-results-summary > div,
+.calc-page .lpg-results-summary > div {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px !important;
+}
+
+.calc-page .vehicle-results-summary > div > div,
+.calc-page .lpg-results-summary > div > div {
+    padding: 14px 16px;
+    background: var(--cp-surface-2);
+    border: 1px solid var(--cp-border);
+    border-radius: 12px;
+}
+
+.calc-page .vehicle-results-summary > div > div > span:first-child,
+.calc-page .lpg-results-summary > div > div > span:first-child {
+    margin-bottom: 6px;
+    font-size: 0.8rem !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+}
+
+.calc-page .vehicle-results-summary [id^="vehicle-sum"],
+.calc-page .lpg-results-summary [id^="lpg-sum"],
+.calc-page #solar-sum-offset,
+.calc-page #tree-sum-absorption {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+/* ---------- Paper: student sync card ---------- */
+.calc-page .paper-students-sync-card {
+    padding: 20px 24px !important;
+    background: var(--cp-surface-2) !important;
+    border: 1px solid var(--cp-border) !important;
+    border-left: 4px solid #8b5cf6 !important;
+    border-radius: 16px !important;
+    align-items: center;
+}
+
+.calc-page .paper-students-sync-card label,
+.calc-page .paper-students-sync-card span[style*="text-transform"] {
+    font-size: 0.8rem !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+}
+
+.calc-page #paper-student-input {
+    height: 46px;
+    background: var(--cp-surface) !important;
+    color: var(--cp-ink) !important;
+    border: 1px solid var(--cp-border-strong) !important;
+    border-radius: 10px !important;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page #paper-student-input:focus {
+    border-color: var(--cp-accent) !important;
+    box-shadow: 0 0 0 4px var(--cp-ring);
+}
+
+.calc-page #paper-student-kg,
+.calc-page #paper-total-emissions {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+/* ---------- Final tab: net carbon footprint ---------- */
+.calc-page #sec-final .nested-form-section {
+    padding: 28px !important;
+    background: var(--cp-accent-soft) !important;
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    border-radius: 18px !important;
+}
+
+.calc-page #sec-final .nested-form-section .nested-title {
+    font-size: 1.15rem !important;
+    color: var(--cp-ink) !important;
+    margin-bottom: 22px !important;
+}
+
+/* Breakdown tiles */
+.calc-page #sec-final .nested-form-section > div:nth-of-type(1) > div {
+    padding: 16px 18px !important;
+    background: var(--cp-surface) !important;
+    border: 1px solid var(--cp-border) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page #sec-final .nested-form-section > div:nth-of-type(1) > div > span:first-child {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+.calc-page #sec-final .nested-form-section > div:nth-of-type(1) > div > span:last-child {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+/* Net total row */
+.calc-page #sec-final .nested-form-section > div:nth-of-type(2) {
+    padding: 22px 24px !important;
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border) !important;
+    border-radius: 16px;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page #final-net-footprint {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+}
+
+.calc-page #sec-final .btn {
+    box-shadow: var(--cp-shadow-sm);
+}
+
+/* ---------- Analytics ---------- */
+.calc-page .analytics-stat-box {
+    padding: 22px !important;
+    background: var(--cp-surface-2) !important;
+    border: 1px solid var(--cp-border) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.calc-page .analytics-stat-box:nth-child(5) {
+    background: rgba(59, 130, 246, 0.08) !important;
+    border-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+.calc-page .analytics-stat-box:nth-child(6) {
+    background: var(--cp-accent-soft) !important;
+    border-color: rgba(16, 185, 129, 0.28) !important;
+}
+
+.calc-page .analytics-stat-box:hover {
+    transform: none;
+    box-shadow: var(--cp-shadow);
+}
+
+.calc-page .analytics-stat-box > span:first-child {
+    font-size: 0.82rem !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+}
+
+.calc-page .analytics-stat-box > span:nth-child(2) {
+    font-size: 2rem !important;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Summary dashboard widget: the page's one dark focal point ---------- */
+.calc-page .sticky-summary-widget {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    padding: 26px 30px;
+    border-radius: 22px;
+    color: #ffffff;
+    background:
+        radial-gradient(600px 220px at 100% 0, rgba(52, 211, 153, 0.22), transparent 70%),
+        linear-gradient(135deg, #052e22 0%, #064e3b 55%, #065f46 100%);
+    border: 1px solid rgba(110, 231, 183, 0.25);
+    box-shadow: 0 2px 4px rgba(5, 46, 34, 0.2), 0 18px 40px rgba(5, 46, 34, 0.28);
+}
+
+.calc-page .summary-widget-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 16px;
+}
+
+.calc-page .summary-stat-box {
+    flex: 1 1 170px;
+    min-width: 0;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+}
+
+.calc-page .summary-stat-box.highlight {
+    background: rgba(52, 211, 153, 0.18);
+    border-color: rgba(110, 231, 183, 0.5);
+}
+
+.calc-page .summary-stat-box .stat-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.calc-page .summary-stat-box .stat-value {
+    display: block;
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: #ffffff !important;
+}
+
+.calc-page .summary-stat-box .stat-value.text-red {
+    color: #fdba74 !important;
+}
+
+.calc-page .summary-stat-box .stat-value.text-green {
+    color: #6ee7b7 !important;
+}
+
+.calc-page .summary-stat-box .stat-unit {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.calc-page .summary-actions {
+    margin-left: auto;
+    align-items: center;
+}
+
+/* ---------- Formulas ---------- */
+.calc-page .formulas-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.calc-page .formula-box {
+    padding: 16px 20px;
+    background: var(--cp-surface-2);
+    border: 1px solid var(--cp-border);
+    border-left: 3px solid var(--cp-accent);
+    border-radius: 12px;
+}
+
+.calc-page .formula-box p {
+    margin: 0;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: var(--cp-text);
+}
+
+.calc-page .formula-box p strong {
+    color: var(--cp-ink);
+}
+
+/* ---------- Accessibility ---------- */
+.calc-page a:focus-visible,
+.calc-page button:focus-visible {
+    outline: 2px solid var(--cp-accent);
+    outline-offset: 2px;
+}
+
+.calc-page input:focus-visible,
+.calc-page select:focus-visible {
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .calc-page *,
+    .calc-page *::before,
+    .calc-page *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .calc-page .calculator-hero-section {
+        padding-top: 118px;
+    }
+
+    .calc-page .calculator-hero-section .section-title {
+        font-size: 2.2rem;
+    }
+
+    .calc-page .calc-card,
+    .calc-page .org-details-card {
+        padding: 26px !important;
+    }
+
+    .calc-page .calc-table tbody tr {
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    }
+
+    .calc-page .summary-actions {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .calc-page .calculator-hero-section {
+        padding: 106px 0 32px;
+    }
+
+    .calc-page .calculator-hero-section .section-title {
+        font-size: 1.7rem;
+    }
+
+    .calc-page .calculator-hero-section .section-desc {
+        font-size: 0.97rem;
+    }
+
+    .calc-page .calculator-page-content {
+        padding: 24px 0 72px;
+    }
+
+    .calc-page .calculator-layout-wrapper {
+        --cp-gap: 20px;
+    }
+
+    .calc-page .calc-card,
+    .calc-page .org-details-card {
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+    .calc-page .calc-card-header,
+    .calc-page .org-details-header {
+        margin-bottom: 18px;
+        padding-bottom: 16px;
+    }
+
+    .calc-page .header-icon-box,
+    .calc-page .org-details-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
+    .calc-page .header-icon-box svg,
+    .calc-page .org-details-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .calc-page .calc-card-header .header-titles h3,
+    .calc-page .org-details-title-row h3 {
+        font-size: 1.1rem;
+    }
+
+    .calc-page .calc-card-header .header-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .calc-page .calc-card-header .header-actions .btn {
+        flex: 1;
+    }
+
+    /* Entry cards: single column, delete button in the top-right corner */
+    .calc-page .calc-table tbody tr {
+        grid-template-columns: 1fr;
+        padding: 54px 16px 16px;
+    }
+
+    .calc-page .calc-table tbody tr::before {
+        left: 16px;
+    }
+
+    .calc-page .calc-table td:last-child {
+        top: 6px;
+        right: 8px;
+    }
+
+    .calc-page .form-actions-row .btn {
+        flex: 1 1 100%;
+    }
+
+    .calc-page #sec-final .nested-form-section {
+        padding: 18px !important;
+    }
+
+    .calc-page #sec-final .nested-form-section > div:nth-of-type(2) {
+        padding: 18px !important;
+    }
+
+    .calc-page #sec-final .nested-form-section > div:nth-of-type(2) > div:last-child {
+        text-align: left !important;
+    }
+
+    .calc-page #final-net-footprint {
+        font-size: 1.7rem !important;
+    }
+
+    .calc-page .sticky-summary-widget {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .calc-page .summary-widget-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .calc-page .summary-stat-box .stat-value {
+        font-size: 1.55rem;
+    }
+
+    .calc-page .summary-actions {
+        margin-left: 0;
+    }
+
+    .calc-page .summary-actions .btn {
+        flex: 1;
+    }
+
+    .calc-page .calculator-subnav-wrapper {
+        top: 64px;
+    }
+}
