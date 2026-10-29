@@ -13,9 +13,9 @@
 (function () {
     'use strict';
 
-    // Supabase Configuration for Edge Function Calls
-    const SUPABASE_URL = "https://ifwnhzjfwluqjhsfykbw.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_dDgGIa04mh20YFU1PbGSsw_M0l6mfjG";
+    // Load Supabase credentials from centralized config (js/config.js)
+    const SUPABASE_URL = window.CARBONTRACK_CONFIG?.SUPABASE_URL || "";
+    const SUPABASE_ANON_KEY = window.CARBONTRACK_CONFIG?.SUPABASE_ANON_KEY || "";
 
     // Helper to format tree species display names
     function formatSpeciesName(slug) {

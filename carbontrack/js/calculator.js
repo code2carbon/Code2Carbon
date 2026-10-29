@@ -4,13 +4,13 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Configure your Supabase Credentials here
-    const SUPABASE_URL = "https://ifwnhzjfwluqjhsfykbw.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_dDgGIa04mh20YFU1PbGSsw_M0l6mfjG";
+    // Load Supabase credentials from centralized config (js/config.js)
+    const SUPABASE_URL = window.CARBONTRACK_CONFIG?.SUPABASE_URL || "";
+    const SUPABASE_ANON_KEY = window.CARBONTRACK_CONFIG?.SUPABASE_ANON_KEY || "";
 
     // Initialize Supabase Client
     let supabase = null;
-    if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY") {
+    if (typeof window.supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
  

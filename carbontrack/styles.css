@@ -371,7 +371,7 @@ section {
     padding-bottom: 80px;
     display: flex;
     align-items: center;
-    background-image: url('assets/hero_background.jpg');
+    background-image: url('assets/images/hero_background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1608,7 +1608,7 @@ section {
 
 /* 15. Login Section Styling */
 .login-section {
-    background-image: url('assets/hero_background.jpg');
+    background-image: url('assets/images/hero_background.jpg');
     background-size: cover;
     background-position: center;
     position: relative;
