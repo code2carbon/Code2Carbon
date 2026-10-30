@@ -4,16 +4,24 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Configure your Supabase Credentials here
-    const SUPABASE_URL = "https://ifwnhzjfwluqjhsfykbw.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_dDgGIa04mh20YFU1PbGSsw_M0l6mfjG";
+    // Retrieve Supabase Client and Config dynamically
+    const cfg = window.CarbonTrackConfig || {};
+    const env = window.__ENV__ || {};
+    const SUPABASE_URL = (cfg.SUPABASE_URL || env.SUPABASE_URL || "").trim();
+    const SUPABASE_ANON_KEY = (cfg.SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || "").trim();
 
-    // Initialize Supabase Client
-    let supabase = null;
-    if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY") {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Initialize Supabase Client if not already provided by CarbonAuth
+    let supabase = window.supabaseClient || null;
+    if (!supabase && typeof window.supabase !== 'undefined' && typeof window.supabase.createClient === 'function') {
+        if (SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes("your-project")) {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } catch (e) {
+                console.warn('Could not initialize direct Supabase client in calculator.js:', e);
+            }
+        }
     }
- 
+
     // Default Coefficients configuration
     const VEHICLE_FUEL_FACTORS = {
         petrol: 2.314,
@@ -114,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAddEnergy = document.getElementById('btn-add-energy');
     const btnAddGenerator = document.getElementById('btn-add-generator');
     const btnCalculateGenerator = document.getElementById('btn-calculate-generator');
-    
+
     const btnAddLpg = document.getElementById('btn-add-lpg');
     const btnCalculateLpg = document.getElementById('btn-calculate-lpg');
     const lpgResultsSummary = document.getElementById('lpg-results-summary');
@@ -126,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCalculateTrees = document.getElementById('btn-calculate-trees');
     const treeResultsSummary = document.getElementById('tree-results-summary');
     const treeSumAbsorptionSpan = document.getElementById('tree-sum-absorption');
-    
+
     const btnAddSolar = document.getElementById('btn-add-solar');
     const btnCalculateSolar = document.getElementById('btn-calculate-solar');
     const solarResultsSummary = document.getElementById('solar-results-summary');
@@ -241,10 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateFactor() {
             const f = selFuel.value;
             const own = selOwnership.value;
-            
+
             const fact = VEHICLE_FUEL_FACTORS[f] !== undefined ? VEHICLE_FUEL_FACTORS[f] : 0;
             inpFactor.value = fact.toFixed(3);
-            
+
             // Update Scope cell dynamically based on ownership and fuel
             const scopeCell = tr.querySelector('.vehicle-scope');
             if (own === 'institute-owned') {
@@ -256,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 scopeCell.innerHTML = `<span class="init-scope-badge scope3">Scope 3</span>`;
             }
-            
+
             calculateVehicleRow(tr);
         }
 
@@ -305,9 +313,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Daily Emission = Number of Vehicles × Average Distance × Emission Factor × 0.0485
         const dayEm = count * distance * factor * 0.0485;
         // Monthly Emission = Daily Emission × 5 × 4
-        const monthEm = dayEm * 5 * 4; 
+        const monthEm = dayEm * 5 * 4;
         // Annual Emission = Monthly Emission × 12
-        const yearEm = monthEm * 12; 
+        const yearEm = monthEm * 12;
         const yearTons = yearEm / 1000;
 
         row.querySelector('.vehicle-day').textContent = dayEm.toFixed(2);
@@ -331,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayVal = parseFloat(row.querySelector('.vehicle-day').textContent) || 0;
             const monthVal = parseFloat(row.querySelector('.vehicle-month').textContent) || 0;
             const yearVal = parseFloat(row.querySelector('.vehicle-year').textContent) || 0;
-            
+
             totalDay += dayVal;
             totalMonth += monthVal;
             totalYear += yearVal;
@@ -387,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const config = ENERGY_COEFFICIENTS[selType.value] || { factor: 0.792, unit: 'kWh' };
             inpFactor.value = config.factor.toFixed(3);
             inpUnit.value = config.unit;
-            
+
             // Adjust source text defaults
             if (selType.value === 'purchased-grid') inpSource.value = 'Grid utility';
             else if (selType.value === 'solar-power' || selType.value === 'wind-power') inpSource.value = 'Clean renewable';
@@ -437,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function calculateEnergyRow(row) {
         const cons = Math.max(0, parseFloat(row.querySelector('.energy-consumption').value) || 0);
         const fact = Math.max(0, parseFloat(row.querySelector('.energy-factor').value) || 0);
-        
+
         // Electricity Emission = Consumption × Emission Factor
         const monthly = cons * fact;
         // Annual Emission
@@ -499,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function calculateGeneratorRow(row) {
         const diesel = Math.max(0, parseFloat(row.querySelector('.generator-diesel').value) || 0);
         const factor = 2.684;
-        
+
         // Monthly Activity = Consumption × 2.684
         const monthly = diesel * factor;
         // Annual Emission = Monthly Activity × 12
@@ -604,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lRows.forEach(row => {
             const monthVal = parseFloat(row.querySelector('.lpg-monthly').textContent) || 0;
             const yearVal = parseFloat(row.querySelector('.lpg-annual').textContent) || 0;
-            
+
             totalMonth += monthVal;
             totalYear += yearVal;
         });
@@ -662,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (paperStudentInput && parseInt(paperStudentInput.value) !== students) {
             paperStudentInput.value = students;
         }
-        
+
         // Student Consumption = Students * 12 * 125 * 0.0005 = Students * 0.75 kg/yr
         const studentConsumptionKg = students * 12 * 125 * 0.0005;
         if (paperStudentKgSpan) {
@@ -1188,7 +1196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Net Carbon Footprint = (Paper + LPG + Electricity + Generator + Vehicles) - (Solar + Trees)
         const netFootprint = (paperSum + lpgSum + electricitySum + generatorSum + vehicleSum) - (solarSum + treesSum);
-        
+
         const elNet = document.getElementById('final-net-footprint');
         const elNetTons = document.getElementById('final-net-footprint-tons');
 
@@ -1213,7 +1221,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const orgName = document.getElementById('org-name')?.value || 'Not provided';
         const orgAddress = document.getElementById('org-address')?.value || 'Not provided';
         const orgContact = document.getElementById('org-contact')?.value || 'Not provided';
-        const orgEmail = document.getElementById('org-email')?.value || 'Not provided';
+        let orgEmail = document.getElementById('org-email')?.value?.trim();
+
+        // If authenticated user, prefer their authenticated email if not explicitly provided
+        if (window.CarbonAuth && window.CarbonAuth.getUser()) {
+            const authUser = window.CarbonAuth.getUser();
+            if (!orgEmail || orgEmail === 'Not provided') {
+                orgEmail = authUser.email;
+                const emailInput = document.getElementById('org-email');
+                if (emailInput) emailInput.value = orgEmail;
+            }
+        } else if (!orgEmail) {
+            orgEmail = 'Not provided';
+        }
 
         // Collect footprint values
         const paperText = document.getElementById('final-paper-emission')?.textContent || '0.00';
@@ -1242,26 +1262,30 @@ document.addEventListener('DOMContentLoaded', () => {
             net_footprint_kg: parseFloat(netText) || 0
         };
 
-        if (!supabase) {
-            showToastMsg('Supabase is not configured! Check SUPABASE_URL and SUPABASE_ANON_KEY at the top of calculator.js.', 'error');
-            console.log('Submission Payload:', payload);
-            return;
-        }
-
-        showToastMsg('Submitting data to Supabase...', 'info');
+        showToastMsg('Saving assessment data...', 'info');
 
         try {
-            const { data, error } = await supabase
-                .from('emissions_submissions')
-                .insert([payload]);
+            if (window.CarbonAuth && typeof window.CarbonAuth.saveUserAssessment === 'function') {
+                await window.CarbonAuth.saveUserAssessment(payload);
+                const user = window.CarbonAuth.getUser();
+                if (user) {
+                    showToastMsg(`Assessment successfully saved for ${user.email}!`, 'success');
+                } else {
+                    showToastMsg('Assessment data saved successfully!', 'success');
+                }
+            } else if (supabase) {
+                const { data, error } = await supabase
+                    .from('emissions_submissions')
+                    .insert([payload]);
 
-            if (error) {
-                throw error;
+                if (error) throw error;
+                showToastMsg('Data submitted successfully to Supabase!', 'success');
+            } else {
+                showToastMsg('Supabase is not configured! Check SUPABASE_URL and SUPABASE_ANON_KEY.', 'error');
+                console.log('Submission Payload:', payload);
             }
-
-            showToastMsg('Data submitted successfully!', 'success');
         } catch (error) {
-            console.error('Error submitting data to Supabase:', error);
+            console.error('Error submitting data:', error);
             showToastMsg('Failed to submit data. Check console log for details.', 'error');
         }
     }
@@ -1417,6 +1441,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.processSubmissionAndGenerateReport === 'function') {
                 window.processSubmissionAndGenerateReport();
             }
+        });
+    }
+
+    const btnSaveUserData = document.getElementById('btn-save-user-data');
+    if (btnSaveUserData) {
+        btnSaveUserData.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateSummary();
+            submitDataToBackend();
         });
     }
 

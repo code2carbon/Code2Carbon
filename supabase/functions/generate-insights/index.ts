@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Supabase Edge Function: generate-insights
 // Secure server-side environmental insights generation powered by Google Gemini API
 // API Key is retrieved from Supabase Environment Secrets (GEMINI_API_KEY) - never exposed to the client
@@ -176,7 +177,7 @@ Return a valid JSON object matching the following structure:
     return new Response(
       JSON.stringify({
         error: "Internal Edge Function exception occurred.",
-        message: error.message,
+        message: (error as Error)?.message || String(error),
       }),
       {
         status: 500,

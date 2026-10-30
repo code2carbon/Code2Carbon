@@ -20,9 +20,9 @@ npm install -g supabase
 ### 2. Login & Link Your Supabase Project
 ```bash
 supabase login
-supabase link --project-ref ifwnhzjfwluqjhsfykbw
+supabase link --project-ref gqwupemhxhbfxfcraggw
 ```
-*(Replace `ifwnhzjfwluqjhsfykbw` with your Supabase Project Ref if using a different instance)*
+*(Replace `gqwupemhxhbfxfcraggw` with your Supabase Project Ref if using a different instance)*
 
 ### 3. Set the Gemini API Key in Supabase Secrets
 Get your Gemini API Key from [Google AI Studio](https://aistudio.google.com/):
@@ -38,11 +38,21 @@ supabase functions deploy generate-insights --no-verify-jwt
 
 ---
 
-## Testing the Function
-You can test the deployed function with curl:
-```bash
-curl -i --location --request POST 'https://ifwnhzjfwluqjhsfykbw.supabase.co/functions/v1/generate-insights' \
-  --header 'Authorization: Bearer YOUR_SUPABASE_ANON_KEY' \
-  --header 'Content-Type: application/json' \
-  --data '{"assessment": {"institution": {"name": "Test College"}, "scopes": {"scope1Kg": 100, "scope2Kg": 200, "scope3Kg": 50}, "grossEmissionsKg": 350, "totalOffsetsKg": 50, "netEmissionsKg": 300, "intensity": {}, "sources": [], "hotspots": []}}'
-```
+## Google OAuth & User Session Authentication
+
+CarbonTrack includes comprehensive user authentication and persistent session management supporting:
+1. **Google OAuth 2.0 (via Supabase Auth)**
+2. **Email & Password Authentication**
+3. **Session Persistence**: Stored via Supabase tokens in `localStorage`
+4. **User-Scoped Assessment Storage**: Each carbon emission calculation is automatically saved under the logged-in user's account in Supabase (`emissions_submissions`) and synchronized locally.
+
+### Activating Google Login in Supabase Dashboard:
+1. Go to your [Google Cloud Console](https://console.cloud.google.com/) -> **APIs & Services** -> **Credentials**.
+2. Create an **OAuth 2.0 Client ID** (Web application).
+3. In Supabase Dashboard for project `gqwupemhxhbfxfcraggw`:
+   - Navigate to **Authentication** -> **Providers** -> **Google**.
+   - Enable the Google provider.
+   - Enter your Google **Client ID** and **Client Secret**.
+   - Add Supabase's Authorized Redirect URI (shown in Supabase Dashboard) to Google Cloud Console's *Authorized redirect URIs*:
+     `https://gqwupemhxhbfxfcraggw.supabase.co/auth/v1/callback`
+4. Save changes. Users clicking **"Sign in with Google"** on CarbonTrack will authenticate directly through Google and have their institutional carbon audits permanently linked to their account.
