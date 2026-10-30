@@ -13,9 +13,11 @@
 (function () {
     'use strict';
 
-    // Supabase Configuration for Edge Function Calls
-    const SUPABASE_URL = "https://ifwnhzjfwluqjhsfykbw.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_dDgGIa04mh20YFU1PbGSsw_M0l6mfjG";
+    // Supabase Configuration for Edge Function Calls retrieved from CarbonTrackConfig
+    const cfg = window.CarbonTrackConfig || {};
+    const env = window.__ENV__ || {};
+    const SUPABASE_URL = (cfg.SUPABASE_URL || env.SUPABASE_URL || "").trim();
+    const SUPABASE_ANON_KEY = (cfg.SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || "").trim();
 
     // Helper to format tree species display names
     function formatSpeciesName(slug) {
@@ -104,7 +106,7 @@
                 scope: 1,
                 category: 'Scope 1 – Direct Stationary Combustion',
                 name: 'Diesel Generator Backup Systems',
-                activityData: `${genLiters.toLocaleString(undefined, {maximumFractionDigits:1})} Liters/year`,
+                activityData: `${genLiters.toLocaleString(undefined, { maximumFractionDigits: 1 })} Liters/year`,
                 factor: `${EMISSION_FACTORS.diesel} kg CO₂e/L`,
                 kg: generatorKg,
                 tons: generatorKg / 1000
@@ -137,7 +139,7 @@
                 scope: 1,
                 category: 'Scope 1 – Direct Thermal Combustion',
                 name: 'Liquefied Petroleum Gas (LPG) - Dining & Mess Kitchens',
-                activityData: `${lpgKgUsed.toLocaleString(undefined, {maximumFractionDigits:1})} kg LPG/year`,
+                activityData: `${lpgKgUsed.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg LPG/year`,
                 factor: `${EMISSION_FACTORS.lpg} kg CO₂e/kg`,
                 kg: lpgEmissionKg,
                 tons: lpgEmissionKg / 1000
@@ -165,7 +167,7 @@
                 scope: 2,
                 category: 'Scope 2 – Purchased Electricity',
                 name: 'State Grid Electricity Supply (MSEDCL/Utility)',
-                activityData: `${electricityKwh.toLocaleString(undefined, {maximumFractionDigits:1})} kWh/year`,
+                activityData: `${electricityKwh.toLocaleString(undefined, { maximumFractionDigits: 1 })} kWh/year`,
                 factor: `${EMISSION_FACTORS.electricity} kg CO₂e/kWh`,
                 kg: electricityKg,
                 tons: electricityKg / 1000
@@ -190,7 +192,7 @@
                 scope: 3,
                 category: 'Scope 3 – Upstream Purchased Goods',
                 name: 'Paper Procurement & Academic Supplies',
-                activityData: `${paperKgUsed.toLocaleString(undefined, {maximumFractionDigits:1})} kg paper/year`,
+                activityData: `${paperKgUsed.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg paper/year`,
                 factor: `${EMISSION_FACTORS.paper} kg CO₂e/kg`,
                 kg: paperEmissionKg,
                 tons: paperEmissionKg / 1000
@@ -372,6 +374,11 @@
     // 2. GENUINE AI INSIGHTS INTEGRATION (WITH TRANSPARENT FALLBACK)
     // =========================================================================
     async function fetchAIInsights(model) {
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY || SUPABASE_URL.includes("your-project") || SUPABASE_ANON_KEY.includes("your-anon")) {
+            console.info('Supabase credentials not configured; using deterministic fallback insights.');
+            return null;
+        }
+
         const edgeFunctionUrl = `${SUPABASE_URL}/functions/v1/generate-insights`;
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 6500);
@@ -432,8 +439,8 @@
         const recommendations = [
             {
                 source: topHotspot.name,
-                evidence: `Accounts for ${topHotspot.percentage.toFixed(1)}% of gross emissions (${(topHotspot.kg/1000).toFixed(2)} t CO₂e/yr).`,
-                action: topHotspot.name.includes('LPG') 
+                evidence: `Accounts for ${topHotspot.percentage.toFixed(1)}% of gross emissions (${(topHotspot.kg / 1000).toFixed(2)} t CO₂e/yr).`,
+                action: topHotspot.name.includes('LPG')
                     ? 'Transition student hostel and mess kitchens from conventional commercial LPG burners to high-efficiency commercial induction cooktops powered by dedicated solar PV arrays. Install a decentralized organic waste-to-biogas digester using kitchen scraps to displace remaining fossil gas.'
                     : 'Implement high-efficiency inverter heat pumps, comprehensive LED retrofits, and occupancy-based HVAC setback schedules to lower primary demand.',
                 priority: 'High',
@@ -461,7 +468,7 @@
             },
             {
                 source: 'Scope 3 – Paper & Administrative Supplies',
-                evidence: `Paper consumption contributes ${((model.sources.find(s=>s.id==='paper')?.kg || 0)/1000).toFixed(2)} t CO₂e/yr.`,
+                evidence: `Paper consumption contributes ${((model.sources.find(s => s.id === 'paper')?.kg || 0) / 1000).toFixed(2)} t CO₂e/yr.`,
                 action: 'Institutionalize a paperless campus protocol by digitizing academic submissions, examination evaluations, and administrative approvals via an integrated ERP / LMS ecosystem.',
                 priority: 'Low',
                 timeframe: 'Short-term (0–3 months)',
@@ -480,16 +487,16 @@
         ];
 
         return {
-            executiveSummary: `The comprehensive greenhouse gas (GHG) inventory conducted for ${instName} for ${model.institution.reportingYear} reveals a gross operational carbon footprint of ${model.grossEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e/year (${model.grossEmissionsTons.toFixed(2)} t CO₂e/year). Against this generation profile, verified clean energy systems and campus vegetative biomass produce ${model.totalOffsetsKg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e/year (${model.totalOffsetsTons.toFixed(2)} t CO₂e/year) in valid offsets. Consequently, the net institutional carbon footprint is certified at ${model.netEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e/year (${model.netEmissionsTons.toFixed(2)} t CO₂e/year).\n\n${dominantDriverText}\n\nOn an operational intensity basis, the institution records a net carbon intensity of ${model.intensity.perCapitaKg.toFixed(2)} kg CO₂e per occupant per year, and a gross spatial intensity of ${model.intensity.perSqmKg.toFixed(2)} kg CO₂e per square meter of built-up area. Decarbonization priorities must immediately concentrate on the primary hotspot (${topHotspot.name}), combined with targeted solar capacity expansion and digital governance workflows.`,
+            executiveSummary: `The comprehensive greenhouse gas (GHG) inventory conducted for ${instName} for ${model.institution.reportingYear} reveals a gross operational carbon footprint of ${model.grossEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e/year (${model.grossEmissionsTons.toFixed(2)} t CO₂e/year). Against this generation profile, verified clean energy systems and campus vegetative biomass produce ${model.totalOffsetsKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e/year (${model.totalOffsetsTons.toFixed(2)} t CO₂e/year) in valid offsets. Consequently, the net institutional carbon footprint is certified at ${model.netEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e/year (${model.netEmissionsTons.toFixed(2)} t CO₂e/year).\n\n${dominantDriverText}\n\nOn an operational intensity basis, the institution records a net carbon intensity of ${model.intensity.perCapitaKg.toFixed(2)} kg CO₂e per occupant per year, and a gross spatial intensity of ${model.intensity.perSqmKg.toFixed(2)} kg CO₂e per square meter of built-up area. Decarbonization priorities must immediately concentrate on the primary hotspot (${topHotspot.name}), combined with targeted solar capacity expansion and digital governance workflows.`,
             institutionalAnalysis: `${instName} operates as an educational and technical campus with an active population of ${model.institution.population.toLocaleString()} occupants (${model.institution.students.toLocaleString()} students, ${model.institution.faculty.toLocaleString()} faculty and staff) situated across ${model.institution.areaAcres} acres with a total built-up footprint of ${model.institution.builtUpSqm.toLocaleString()} m². The physical layout comprises academic instructional halls, specialized technical laboratories, administrative offices, and auxiliary amenities. Geographic coordinates (${model.institution.lat}, ${model.institution.lng}) place the campus in an agro-climatic region characterized by strong solar irradiance, providing significant natural leverage for renewable self-generation.`,
-            scope1Interpretation: `Scope 1 direct emissions contribute ${model.scopes.scope1Kg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e (${model.scopes.scope1Tons.toFixed(2)} t CO₂e), representing ${s1}% of the gross institutional inventory. Combustion of fuels within the campus boundary is primarily driven by stationary power generators and thermal kitchen facilities. A detailed review reveals that diesel generator utilization is kept at minimal standby reserve, indicating dependable regional grid availability. Conversely, gaseous fuels (LPG) utilized for residential dining and laboratory heating represent the principal direct combustion volume, highlighting hostel culinary operations as a prime candidate for technological electrification.`,
-            scope2Interpretation: `Scope 2 emissions stemming from purchased grid electricity total ${model.scopes.scope2Kg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e (${model.scopes.scope2Tons.toFixed(2)} t CO₂e), constituting ${s2}% of total emissions. Energy consumption is calculated utilizing the Central Electricity Authority (CEA) CO₂ Baseline Database grid emission factor of 0.792 kg CO₂e/kWh. Where rooftop solar PV systems are operational, they actively suppress the net grid import profile, mitigating institutional exposure to grid-based carbon liabilities during daylight operational hours.`,
-            scope3Interpretation: `Scope 3 indirect emissions account for ${model.scopes.scope3Kg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e (${model.scopes.scope3Tons.toFixed(2)} t CO₂e), comprising ${s3}% of the overall inventory. The principal drivers within the assessed Scope 3 boundary include daily commuter transport (staff, faculty, and student transit) and administrative paper procurement. Commuter transit reflects regional transit habits and vehicle modal share. Digital workflow policies are actively curtailing paper-related emissions, with further gains achievable through enterprise resource planning (ERP) integration.`,
-            hotspotAnalysis: `Empirical ranking of emission streams identifies ${topHotspot.name} as the primary emission hotspot (${topHotspot.percentage.toFixed(1)}% of gross footprint, ${(topHotspot.kg/1000).toFixed(2)} t CO₂e), followed by ${secondHotspot.name} (${secondHotspot.percentage.toFixed(1)}% of gross footprint). Prioritizing engineering capital towards mitigating ${topHotspot.name} delivers the most substantial net emission abatement per invested rupee.`,
+            scope1Interpretation: `Scope 1 direct emissions contribute ${model.scopes.scope1Kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e (${model.scopes.scope1Tons.toFixed(2)} t CO₂e), representing ${s1}% of the gross institutional inventory. Combustion of fuels within the campus boundary is primarily driven by stationary power generators and thermal kitchen facilities. A detailed review reveals that diesel generator utilization is kept at minimal standby reserve, indicating dependable regional grid availability. Conversely, gaseous fuels (LPG) utilized for residential dining and laboratory heating represent the principal direct combustion volume, highlighting hostel culinary operations as a prime candidate for technological electrification.`,
+            scope2Interpretation: `Scope 2 emissions stemming from purchased grid electricity total ${model.scopes.scope2Kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e (${model.scopes.scope2Tons.toFixed(2)} t CO₂e), constituting ${s2}% of total emissions. Energy consumption is calculated utilizing the Central Electricity Authority (CEA) CO₂ Baseline Database grid emission factor of 0.792 kg CO₂e/kWh. Where rooftop solar PV systems are operational, they actively suppress the net grid import profile, mitigating institutional exposure to grid-based carbon liabilities during daylight operational hours.`,
+            scope3Interpretation: `Scope 3 indirect emissions account for ${model.scopes.scope3Kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e (${model.scopes.scope3Tons.toFixed(2)} t CO₂e), comprising ${s3}% of the overall inventory. The principal drivers within the assessed Scope 3 boundary include daily commuter transport (staff, faculty, and student transit) and administrative paper procurement. Commuter transit reflects regional transit habits and vehicle modal share. Digital workflow policies are actively curtailing paper-related emissions, with further gains achievable through enterprise resource planning (ERP) integration.`,
+            hotspotAnalysis: `Empirical ranking of emission streams identifies ${topHotspot.name} as the primary emission hotspot (${topHotspot.percentage.toFixed(1)}% of gross footprint, ${(topHotspot.kg / 1000).toFixed(2)} t CO₂e), followed by ${secondHotspot.name} (${secondHotspot.percentage.toFixed(1)}% of gross footprint). Prioritizing engineering capital towards mitigating ${topHotspot.name} delivers the most substantial net emission abatement per invested rupee.`,
             internalComparisonAnalysis: `Analysis of internal emission intensities reveals an operational signature of ${model.intensity.perCapitaKg.toFixed(2)} kg CO₂e/occupant/year. In comparison with typical Indian technical institutions where Scope 2 electricity commonly represents 60%–85% of emissions, ${instName}'s profile demonstrates distinctive thermal and operational dynamics. The low grid electricity share reflects effective daylight operations and renewable adoption, while highlighting dining thermal energy as the key strategic intervention vector.`,
             standardsDiscussion: `This assessment strictly adheres to the greenhouse gas accounting principles codified in ISO 14064-1:2018 and the GHG Protocol Corporate Standard: Relevance (reflecting operational boundary realities), Completeness (accounting for all active fuels, electricity, and measurable supplies), Consistency (applying standardized CEA and IPCC coefficients), Accuracy (minimizing calculation uncertainties), and Transparency (documenting all conversion equations and activity data records).`,
             recommendations: recommendations,
-            conclusion: `The greenhouse gas baseline established for ${instName} provides a transparent, scientifically defensible platform for institutional climate leadership. With a net operational carbon footprint of ${model.netEmissionsTons.toFixed(2)} t CO₂e/year (${model.netEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e) and an existing offset contribution of ${model.totalOffsetsTons.toFixed(2)} t CO₂e/year, the campus is well-positioned to achieve accelerated decarbonization. Implementing the targeted engineering recommendations—namely kitchen thermal electrification, solar PV scaling, transit optimization, and continuous native afforestation—will steer the campus toward meaningful Net-Zero alignment and enhanced accreditation standing.`
+            conclusion: `The greenhouse gas baseline established for ${instName} provides a transparent, scientifically defensible platform for institutional climate leadership. With a net operational carbon footprint of ${model.netEmissionsTons.toFixed(2)} t CO₂e/year (${model.netEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e) and an existing offset contribution of ${model.totalOffsetsTons.toFixed(2)} t CO₂e/year, the campus is well-positioned to achieve accelerated decarbonization. Implementing the targeted engineering recommendations—namely kitchen thermal electrification, solar PV scaling, transit optimization, and continuous native afforestation—will steer the campus toward meaningful Net-Zero alignment and enhanced accreditation standing.`
         };
     }
 
@@ -1164,7 +1171,7 @@
                                     <td style="border: 1px solid #000000; padding: 5px; text-align: center;">1.${idx + 1}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 8px;">${s.name}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 6px;">${s.activityData}</td>
-                                    <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.kg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                    <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.tons.toFixed(3)}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 4px; text-align: right; font-weight: bold;">${s.percentage.toFixed(2)}%</td>
                                 </tr>
@@ -1173,7 +1180,7 @@
                             `}
                             <tr style="background: #fae5d3; font-weight: bold;">
                                 <td colspan="3" style="border: 1px solid #000000; padding: 5px 8px; text-align: right;">SUBTOTAL SCOPE 1:</td>
-                                <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope1Kg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope1Kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope1Tons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 5px 4px; text-align: right;">${model.scopes.scope1Pct.toFixed(2)}%</td>
                             </tr>
@@ -1187,7 +1194,7 @@
                                     <td style="border: 1px solid #000000; padding: 5px; text-align: center;">2.${idx + 1}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 8px;">${s.name}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 6px;">${s.activityData}</td>
-                                    <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.kg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                    <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.tons.toFixed(3)}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 4px; text-align: right; font-weight: bold;">${s.percentage.toFixed(2)}%</td>
                                 </tr>
@@ -1196,7 +1203,7 @@
                             `}
                             <tr style="background: #d4e6f1; font-weight: bold;">
                                 <td colspan="3" style="border: 1px solid #000000; padding: 5px 8px; text-align: right;">SUBTOTAL SCOPE 2:</td>
-                                <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope2Kg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope2Kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope2Tons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 5px 4px; text-align: right;">${model.scopes.scope2Pct.toFixed(2)}%</td>
                             </tr>
@@ -1210,7 +1217,7 @@
                                     <td style="border: 1px solid #000000; padding: 5px; text-align: center;">3.${idx + 1}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 8px;">${s.name}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 6px;">${s.activityData}</td>
-                                    <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.kg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                    <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${s.tons.toFixed(3)}</td>
                                     <td style="border: 1px solid #000000; padding: 5px 4px; text-align: right; font-weight: bold;">${s.percentage.toFixed(2)}%</td>
                                 </tr>
@@ -1219,7 +1226,7 @@
                             `}
                             <tr style="background: #d5f5e3; font-weight: bold;">
                                 <td colspan="3" style="border: 1px solid #000000; padding: 5px 8px; text-align: right;">SUBTOTAL SCOPE 3:</td>
-                                <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope3Kg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope3Kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 5px 6px; text-align: right;">${model.scopes.scope3Tons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 5px 4px; text-align: right;">${model.scopes.scope3Pct.toFixed(2)}%</td>
                             </tr>
@@ -1227,7 +1234,7 @@
                             <!-- GROSS TOTAL -->
                             <tr style="background: #1e293b; color: #ffffff; font-weight: bold; font-size: 0.85rem;">
                                 <td colspan="3" style="border: 1px solid #000000; padding: 7px 8px; text-align: right;">GROSS INSTITUTIONAL EMISSIONS:</td>
-                                <td style="border: 1px solid #000000; padding: 7px 6px; text-align: right; color: #f8fafc;">${model.grossEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 7px 6px; text-align: right; color: #f8fafc;">${model.grossEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 7px 6px; text-align: right; color: #38bdf8;">${model.grossEmissionsTons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 7px 4px; text-align: right; color: #4ade80;">100.00%</td>
                             </tr>
@@ -1253,10 +1260,10 @@
                                 Net Operational Footprint = Gross GHG Emissions − Verified Carbon Offsets
                             </h3>
                             <div style="font-size: 0.95rem; font-family: monospace; color: #334155; margin: 6px 0;">
-                                Net Operational Footprint = ${model.grossEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:1})} kg CO₂e − ${model.totalOffsetsKg.toLocaleString(undefined, {maximumFractionDigits:1})} kg CO₂e
+                                Net Operational Footprint = ${model.grossEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg CO₂e − ${model.totalOffsetsKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg CO₂e
                             </div>
                             <div style="font-size: 1.6rem; font-weight: 800; color: #00b050; margin-top: 10px;">
-                                = ${model.netEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:2})} kg CO₂e/year
+                                = ${model.netEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg CO₂e/year
                             </div>
                             <div style="font-size: 1.05rem; font-weight: 700; color: #475569; margin-top: 2px;">
                                 (&asymp; ${model.netEmissionsTons.toFixed(2)} t CO₂e/year)
@@ -1282,27 +1289,27 @@
                             <tr>
                                 <td style="border: 1px solid #000000; padding: 6px; text-align: center;">1.</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px;">Solar Clean Energy Generation Avoidance</td>
-                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.solarKg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.solarKg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.solarTons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.solarPct.toFixed(1)}%</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid #000000; padding: 6px; text-align: center;">2.</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px;">Biological Green Cover / Tree Biomass Sequestration</td>
-                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.treesKg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.treesKg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.treesTons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.treesPct.toFixed(1)}%</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid #000000; padding: 6px; text-align: center;">3.</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px;">Solid Waste Diversion &amp; Composting Offset</td>
-                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.wasteKg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.wasteKg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.wasteTons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.offsetsBreakdown.wasteKg > 0 && model.totalOffsetsKg > 0 ? ((model.offsetsBreakdown.wasteKg / model.totalOffsetsKg) * 100).toFixed(1) : '0.0'}%</td>
                             </tr>
                             <tr style="background: #d5f5e3; font-weight: bold;">
                                 <td colspan="2" style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">TOTAL VERIFIED REMOVALS:</td>
-                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.totalOffsetsKg.toLocaleString(undefined, {maximumFractionDigits:1})}</td>
+                                <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.totalOffsetsKg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">${model.totalOffsetsTons.toFixed(3)}</td>
                                 <td style="border: 1px solid #000000; padding: 6px 8px; text-align: right;">100.0%</td>
                             </tr>
@@ -1554,7 +1561,7 @@
                         16. Detailed Recommendations
                     </h2>
                     <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">
-                        To systematically mitigate the institutional net footprint of <strong>${model.netEmissionsKg.toLocaleString(undefined, {maximumFractionDigits:1})} kg CO₂e/year</strong>, the following targeted engineering interventions are recommended:
+                        To systematically mitigate the institutional net footprint of <strong>${model.netEmissionsKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg CO₂e/year</strong>, the following targeted engineering interventions are recommended:
                     </p>
 
                     <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -1718,7 +1725,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid #000000; padding: 7px 10px; font-weight: bold; background: #f8fafc;">Total Campus Land Area:</td>
-                                <td style="border: 1px solid #000000; padding: 7px 10px;">${inst.areaAcres} acres (&asymp; ${(inst.areaAcres * 4046.86).toLocaleString(undefined, {maximumFractionDigits:1})} m²)</td>
+                                <td style="border: 1px solid #000000; padding: 7px 10px;">${inst.areaAcres} acres (&asymp; ${(inst.areaAcres * 4046.86).toLocaleString(undefined, { maximumFractionDigits: 1 })} m²)</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid #000000; padding: 7px 10px; font-weight: bold; background: #f8fafc;">Total Built-up Facility Area:</td>
@@ -2045,7 +2052,7 @@
     // =========================================================================
     async function openReportInNewTab() {
         const model = buildReportDataModel();
-        
+
         // Show status feedback
         if (typeof window.showToast === 'function') {
             window.showToast('Synthesizing report & environmental insights...', 'info');
@@ -2190,7 +2197,7 @@
 
     async function downloadReportPDFDirectly() {
         const model = buildReportDataModel();
-        
+
         if (typeof window.showToast === 'function') {
             window.showToast('Generating accredited PDF report...', 'info');
         }

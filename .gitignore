@@ -1,0 +1,44 @@
+# ==========================================================================
+# CarbonTrack Git Ignore Rules
+# Protects private credentials, environment files, and local artifacts
+# ==========================================================================
+
+# 1. Environment & Secret Keys (CRITICAL: Never commit to Git)
+.env
+.env.*
+!.env.example
+env.js
+**/env.js
+!env.example.js
+!**/env.example.js
+config.local.js
+**/config.local.js
+secrets/
+*.pem
+*.key
+*.cert
+*.pfx
+
+# 2. Logs, Cache & OS Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 3. Node & Dependencies (if any added)
+node_modules/
+dist/
+build/
+.temp/
+.cache/
+
+# 4. IDE / Editor Directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
