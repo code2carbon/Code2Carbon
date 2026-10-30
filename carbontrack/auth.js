@@ -600,36 +600,51 @@
             }
 
             // 2. Also try inserting to Supabase table `emissions_submissions`
-            if (this.supabase) {
-                try {
-                    const rowData = {
-                        organization_name: assessmentData.organization_name || 'Not provided',
-                        address: assessmentData.address || 'Not provided',
-                        contact_number: assessmentData.contact_number || 'Not provided',
-                        email: record.user_email || 'anonymous',
-                        student_count: assessmentData.student_count || 0,
-                        paper_emissions_kg: assessmentData.paper_emissions_kg || 0,
-                        lpg_emissions_kg: assessmentData.lpg_emissions_kg || 0,
-                        electricity_emissions_kg: assessmentData.electricity_emissions_kg || 0,
-                        generator_emissions_kg: assessmentData.generator_emissions_kg || 0,
-                        vehicle_emissions_kg: assessmentData.vehicle_emissions_kg || 0,
-                        solar_offset_kg: assessmentData.solar_offset_kg || 0,
-                        tree_sink_kg: assessmentData.tree_sink_kg || 0,
-                        net_footprint_kg: assessmentData.net_footprint_kg || 0
-                    };
-
-                    const { data: dbData, error: dbErr } = await this.supabase
-                        .from('emissions_submissions')
-                        .insert([rowData]);
-
-                    if (dbErr) {
-                        console.error('Supabase DB insert error:', dbErr);
-                    } else {
-                        console.log('Successfully saved assessment to Supabase emissions_submissions:', dbData);
+            if (!this.supabase && typeof window.supabase !== 'undefined' && typeof window.supabase.createClient === 'function') {
+                const cfg = window.CarbonTrackConfig || {};
+                const env = window.__ENV__ || {};
+                const url = (cfg.SUPABASE_URL || env.SUPABASE_URL || '').trim();
+                const key = (cfg.SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || '').trim();
+                if (url && key && !url.includes('your-project')) {
+                    try {
+                        this.supabase = window.supabase.createClient(url, key);
+                        window.supabaseClient = this.supabase;
+                    } catch (e) {
+                        console.warn('Could not re-init Supabase client:', e);
                     }
-                } catch (e) {
-                    console.warn('Supabase DB insert note:', e);
                 }
+            }
+
+            if (this.supabase) {
+                const rowData = {
+                    organization_name: assessmentData.organization_name || 'Not provided',
+                    address: assessmentData.address || 'Not provided',
+                    contact_number: assessmentData.contact_number || 'Not provided',
+                    email: record.user_email || 'anonymous',
+                    student_count: parseInt(assessmentData.student_count) || 0,
+                    paper_emissions_kg: parseFloat(assessmentData.paper_emissions_kg) || 0,
+                    lpg_emissions_kg: parseFloat(assessmentData.lpg_emissions_kg) || 0,
+                    electricity_emissions_kg: parseFloat(assessmentData.electricity_emissions_kg) || 0,
+                    generator_emissions_kg: parseFloat(assessmentData.generator_emissions_kg) || 0,
+                    vehicle_emissions_kg: parseFloat(assessmentData.vehicle_emissions_kg) || 0,
+                    solar_offset_kg: parseFloat(assessmentData.solar_offset_kg) || 0,
+                    tree_sink_kg: parseFloat(assessmentData.tree_sink_kg) || 0,
+                    net_footprint_kg: parseFloat(assessmentData.net_footprint_kg) || 0
+                };
+
+                const { data: dbData, error: dbErr } = await this.supabase
+                    .from('emissions_submissions')
+                    .insert([rowData])
+                    .select();
+
+                if (dbErr) {
+                    console.error('Supabase DB insert error:', dbErr);
+                    throw new Error(dbErr.message || JSON.stringify(dbErr));
+                } else {
+                    console.log('Successfully saved assessment to Supabase emissions_submissions:', dbData);
+                }
+            } else {
+                throw new Error('Supabase client is not connected. Check SUPABASE_URL / key configuration.');
             }
 
             // Update UI counts

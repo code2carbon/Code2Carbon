@@ -1298,26 +1298,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const treesText = document.getElementById('final-trees-offset')?.textContent || '0.00';
         const netText = document.getElementById('final-net-footprint')?.textContent || '0.00';
 
-        // Parse float values (matching standard snake_case database schema fields)
-        const payload = {
-            organization_name: orgName,
-            address: orgAddress,
-            contact_number: orgContact,
-            email: orgEmail,
-            student_count: Math.max(0, parseInt(instNumStudents?.value) || 0),
-            paper_emissions_kg: parseFloat(paperText) || 0,
-            lpg_emissions_kg: parseFloat(lpgText) || 0,
-            electricity_emissions_kg: parseFloat(elecText) || 0,
-            generator_emissions_kg: parseFloat(genText) || 0,
-            vehicle_emissions_kg: parseFloat(vehText) || 0,
-            solar_offset_kg: parseFloat(solarText) || 0,
-            tree_sink_kg: parseFloat(treesText) || 0,
-            net_footprint_kg: parseFloat(netText) || 0
-        };
-
         showToastMsg('Saving assessment data to database...', 'info');
 
         try {
+            const studentInput = document.getElementById('inst-num-students');
+            const studentCountVal = studentInput ? parseInt(studentInput.value) || 0 : 0;
+
+            // Parse float values (matching standard snake_case database schema fields)
+            const payload = {
+                organization_name: orgName,
+                address: orgAddress,
+                contact_number: orgContact,
+                email: orgEmail,
+                student_count: Math.max(0, studentCountVal),
+                paper_emissions_kg: parseFloat(paperText) || 0,
+                lpg_emissions_kg: parseFloat(lpgText) || 0,
+                electricity_emissions_kg: parseFloat(elecText) || 0,
+                generator_emissions_kg: parseFloat(genText) || 0,
+                vehicle_emissions_kg: parseFloat(vehText) || 0,
+                solar_offset_kg: parseFloat(solarText) || 0,
+                tree_sink_kg: parseFloat(treesText) || 0,
+                net_footprint_kg: parseFloat(netText) || 0
+            };
+
             if (window.CarbonAuth && typeof window.CarbonAuth.saveUserAssessment === 'function') {
                 await window.CarbonAuth.saveUserAssessment(payload);
                 showToastMsg(`Assessment successfully saved for ${orgEmail}!`, 'success');
