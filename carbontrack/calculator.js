@@ -165,13 +165,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const analyticsPerCapitaSpan = document.getElementById('analytics-per-capita');
     const analyticsPerSqmSpan = document.getElementById('analytics-per-sqm');
 
-    // Toast utility (defined in script.js, fallback if not found)
+    // Toast utility
     const showToastMsg = (msg, type = 'success') => {
-        if (typeof showToast === 'function') {
+        if (window.CarbonAuth && typeof window.CarbonAuth.showNotice === 'function') {
+            window.CarbonAuth.showNotice(msg, type);
+        } else if (typeof showToast === 'function') {
             showToast(msg, type);
         } else {
             console.log(`[Toast ${type}]: ${msg}`);
-            // Fallback simple toast
             const container = document.getElementById('toast-container');
             if (container) {
                 const toast = document.createElement('div');
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     toast.classList.remove('show');
                     setTimeout(() => toast.remove(), 400);
-                }, 3000);
+                }, 3500);
             }
         }
     };
@@ -1262,6 +1263,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function submitDataToBackend() {
+        const btnSave = document.getElementById('btn-save-user-data');
+        const origBtnText = btnSave ? btnSave.innerHTML : '';
+        if (btnSave) {
+            btnSave.innerHTML = '⏳ Saving...';
+            btnSave.disabled = true;
+        }
+
         // Collect organizational details
         const orgName = document.getElementById('org-name')?.value || 'Not provided';
         const orgAddress = document.getElementById('org-address')?.value || 'Not provided';
@@ -1307,31 +1315,35 @@ document.addEventListener('DOMContentLoaded', () => {
             net_footprint_kg: parseFloat(netText) || 0
         };
 
-        showToastMsg('Saving assessment data...', 'info');
+        showToastMsg('Saving assessment data to database...', 'info');
 
         try {
             if (window.CarbonAuth && typeof window.CarbonAuth.saveUserAssessment === 'function') {
                 await window.CarbonAuth.saveUserAssessment(payload);
-                const user = window.CarbonAuth.getUser();
-                if (user) {
-                    showToastMsg(`Assessment successfully saved for ${user.email}!`, 'success');
-                } else {
-                    showToastMsg('Assessment data saved successfully!', 'success');
-                }
-            } else if (supabase) {
+                showToastMsg(`Assessment successfully saved for ${orgEmail}!`, 'success');
+                alert(`Assessment successfully saved to database for ${orgEmail}!`);
+            } else if (typeof supabase !== 'undefined' && supabase) {
                 const { data, error } = await supabase
                     .from('emissions_submissions')
                     .insert([payload]);
 
                 if (error) throw error;
                 showToastMsg('Data submitted successfully to Supabase!', 'success');
+                alert('Assessment successfully saved to Supabase database!');
             } else {
                 showToastMsg('Supabase is not configured! Check SUPABASE_URL and SUPABASE_ANON_KEY.', 'error');
+                alert('Supabase is not configured! Check SUPABASE_URL and SUPABASE_ANON_KEY.');
                 console.log('Submission Payload:', payload);
             }
         } catch (error) {
             console.error('Error submitting data:', error);
-            showToastMsg('Failed to submit data. Check console log for details.', 'error');
+            showToastMsg(`Failed to save: ${error.message || 'Check console log'}`, 'error');
+            alert(`Failed to save assessment: ${error.message || 'Database error'}`);
+        } finally {
+            if (btnSave) {
+                btnSave.innerHTML = origBtnText || '💾 Save Assessment';
+                btnSave.disabled = false;
+            }
         }
     }
 
@@ -1454,17 +1466,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.getElementById('btn-calculate-waste').addEventListener('click', (e) => {
-        e.preventDefault();
-        calculateAll();
-        showToastMsg('Waste recycling offsets calculated.', 'success');
-    });
+    const btnCalculateWaste = document.getElementById('btn-calculate-waste');
+    if (btnCalculateWaste) {
+        btnCalculateWaste.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateAll();
+            showToastMsg('Waste recycling offsets calculated.', 'success');
+        });
+    }
 
-    document.getElementById('btn-recalculate-all').addEventListener('click', (e) => {
-        e.preventDefault();
-        calculateAll();
-        showToastMsg('Complete carbon model re-calculated successfully.', 'success');
-    });
+    const btnRecalculateAll = document.getElementById('btn-recalculate-all');
+    if (btnRecalculateAll) {
+        btnRecalculateAll.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculateAll();
+            showToastMsg('Complete carbon model re-calculated successfully.', 'success');
+        });
+    }
 
     const btnCalculateFinal = document.getElementById('btn-calculate-final');
     if (btnCalculateFinal) {
@@ -1545,15 +1563,21 @@ document.addEventListener('DOMContentLoaded', () => {
         showToastMsg(`Vehicle emissions exported to ${format.toUpperCase()}.`, 'success');
     }
 
-    document.getElementById('btn-export-vehicle-csv').addEventListener('click', (e) => {
-        e.preventDefault();
-        exportVehicleData('csv');
-    });
+    const btnExportVehCsv = document.getElementById('btn-export-vehicle-csv');
+    if (btnExportVehCsv) {
+        btnExportVehCsv.addEventListener('click', (e) => {
+            e.preventDefault();
+            exportVehicleData('csv');
+        });
+    }
 
-    document.getElementById('btn-export-vehicle-excel').addEventListener('click', (e) => {
-        e.preventDefault();
-        exportVehicleData('xls'); // TSV renamed as xls
-    });
+    const btnExportVehExcel = document.getElementById('btn-export-vehicle-excel');
+    if (btnExportVehExcel) {
+        btnExportVehExcel.addEventListener('click', (e) => {
+            e.preventDefault();
+            exportVehicleData('xls'); // TSV renamed as xls
+        });
+    }
 
     // Summary Report Export
     const btnExportFullReport = document.getElementById('btn-export-full-report');

@@ -2331,11 +2331,24 @@
         const pages = tempContainer.querySelectorAll('.report-page');
         const totalPages = pages.length;
 
-        // Try page-by-page rendering using html2canvas & jsPDF to prevent browser canvas height limit crashes
+        // Try page-by-page rendering using html2canvas & jsPDF in an isolated fixed container
         const html2canvasFn = window.html2canvas;
         const JsPdfClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
 
         if (html2canvasFn && JsPdfClass && totalPages > 0) {
+            const singlePageBox = document.createElement('div');
+            singlePageBox.id = 'active-pdf-single-page-box';
+            singlePageBox.style.position = 'fixed';
+            singlePageBox.style.top = '0';
+            singlePageBox.style.left = '0';
+            singlePageBox.style.width = '210mm';
+            singlePageBox.style.height = '297mm';
+            singlePageBox.style.background = '#ffffff';
+            singlePageBox.style.zIndex = '9999999';
+            singlePageBox.style.overflow = 'hidden';
+            singlePageBox.style.boxSizing = 'border-box';
+            document.body.appendChild(singlePageBox);
+
             try {
                 const pdf = new JsPdfClass({
                     unit: 'mm',
@@ -2350,11 +2363,23 @@
                         window.showToast(`Rendering page ${i + 1} of ${totalPages}...`, 'info');
                     }
 
-                    const canvas = await html2canvasFn(pageEl, {
+                    singlePageBox.innerHTML = pageEl.outerHTML;
+                    const renderedEl = singlePageBox.firstElementChild;
+                    if (renderedEl) {
+                        renderedEl.style.margin = '0';
+                        renderedEl.style.width = '210mm';
+                        renderedEl.style.height = '297mm';
+                        renderedEl.style.boxSizing = 'border-box';
+                    }
+
+                    const canvas = await html2canvasFn(singlePageBox, {
                         scale: 1.5,
                         useCORS: true,
                         logging: false,
                         windowWidth: 794,
+                        width: 794,
+                        height: 1123,
+                        scrollX: 0,
                         scrollY: 0
                     });
 
@@ -2367,6 +2392,9 @@
 
                 pdf.save(filename);
 
+                if (document.body.contains(singlePageBox)) {
+                    document.body.removeChild(singlePageBox);
+                }
                 if (document.body.contains(tempContainer)) {
                     document.body.removeChild(tempContainer);
                 }
@@ -2376,7 +2404,10 @@
                 }
                 return;
             } catch (err) {
-                console.warn('Page-by-page PDF generation error, trying html2pdf fallback:', err);
+                console.warn('Page-by-page PDF generation error, trying fallback:', err);
+                if (document.body.contains(singlePageBox)) {
+                    document.body.removeChild(singlePageBox);
+                }
             }
         }
 
