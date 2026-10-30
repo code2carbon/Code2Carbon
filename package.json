@@ -1,0 +1,20 @@
+{
+  "name": "code2carbon",
+  "version": "1.0.0",
+  "description": "Institutional Carbon Emission Assessment & Net-Zero Transition Platform",
+  "main": "build-env.js",
+  "scripts": {
+    "build": "node build-env.js",
+    "start": "node build-env.js"
+  },
+  "keywords": [
+    "carbon-footprint",
+    "sustainability",
+    "ghg-protocol",
+    "iso-14064",
+    "supabase",
+    "net-zero"
+  ],
+  "author": "Code2Carbon Team",
+  "license": "MIT"
+}
