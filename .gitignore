@@ -9,8 +9,6 @@
 !.env.example
 env.js
 **/env.js
-!env.example.js
-!**/env.example.js
 config.local.js
 **/config.local.js
 secrets/
