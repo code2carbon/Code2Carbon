@@ -471,7 +471,7 @@
                             <line x1="12" y1="17" x2="12.01" y2="17"></line>
                         </svg>
                     </div>
-                    <h3 class="auth-consent-title" id="auth-consent-title">Sign Out of CarbonTrack?</h3>
+                    <h3 class="auth-consent-title" id="auth-consent-title">Sign Out of Code2Carbon?</h3>
                     <p class="auth-consent-body">
                         Are you sure you want to log out? Any unsaved carbon footprint inputs or unsubmitted calculations in this session will not be preserved.
                     </p>
