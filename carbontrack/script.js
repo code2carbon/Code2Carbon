@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
-    if (loginForm) {
+    if (loginForm && !window.CarbonAuth) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -399,17 +399,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Simulate Login
                 showModal('Access Granted', `Hello! You have successfully signed in as ${email}. Your profile tracking settings have been loaded.`);
                 loginForm.reset();
             }
         });
     }
 
-    if (googleLoginBtn) {
+    if (googleLoginBtn && !window.CarbonAuth) {
         googleLoginBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Simulate Google OAuth
             showModal('Google Login Connected', 'Successfully authenticated via Google services. Welcome to CarbonTrack!');
         });
     }
@@ -610,17 +608,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update forecast curves and calculations
     function calculateForecastPathway() {
-        if (!dieselInput) return;
-        // Read current calculator values
-        const diesel = Math.max(0, parseFloat(dieselInput.value) || 0);
-        const petrol = Math.max(0, parseFloat(petrolInput.value) || 0);
-        const lpg = Math.max(0, parseFloat(lpgInput.value) || 0);
-        const refrigerant = Math.max(0, parseFloat(refrigerantInput.value) || 0);
-        const originalElectricity = Math.max(0, parseFloat(electricityInput.value) || 0);
-        const water = Math.max(0, parseFloat(waterInput.value) || 0);
-        const paper = Math.max(0, parseFloat(paperInput.value) || 0);
-        const waste = Math.max(0, parseFloat(wasteInput.value) || 0);
-        const travel = Math.max(0, parseFloat(travelInput.value) || 0);
+        // Read values from in-page input controls if present, or provide institutional reference baseline
+        const diesel = dieselInput ? Math.max(0, parseFloat(dieselInput.value) || 0) : 450;
+        const petrol = petrolInput ? Math.max(0, parseFloat(petrolInput.value) || 0) : 380;
+        const lpg = lpgInput ? Math.max(0, parseFloat(lpgInput.value) || 0) : 120;
+        const refrigerant = refrigerantInput ? Math.max(0, parseFloat(refrigerantInput.value) || 0) : 1.5;
+        const originalElectricity = electricityInput ? Math.max(0, parseFloat(electricityInput.value) || 0) : 18500;
+        const water = waterInput ? Math.max(0, parseFloat(waterInput.value) || 0) : 2400;
+        const paper = paperInput ? Math.max(0, parseFloat(paperInput.value) || 0) : 1500;
+        const waste = wasteInput ? Math.max(0, parseFloat(wasteInput.value) || 0) : 3200;
+        const travel = travelInput ? Math.max(0, parseFloat(travelInput.value) || 0) : 8500;
 
         // Scope 1, 2, 3 Baseline Calculations
         const scope1Base = ((diesel * EMISSION_FACTORS.diesel) +

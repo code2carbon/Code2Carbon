@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net-Zero Transition Planner &bull; CarbonTrack</title>
+    <meta name="description" content="Simulate campus decarbonization pathways, toggle sustainability mitigation initiatives, calculate CapEx and ROI, and model your 10-year trajectory toward net-zero.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8.5C18.4 18 14.5 20 11 20z'/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=3.0">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header" id="header">
+        <div class="nav-container">
+            <a href="index.html#home" class="logo">
+                <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8.5C18.4 18 14.5 20 11 20z"></path>
+                    <path d="M19 2c-2.26 4.33-5.27 7.14-8 10"></path>
+                </svg>
+                <span>Carbon<span>Track</span></span>
+            </a>
+            
+            <nav class="nav-menu" id="nav-menu">
+                <a href="index.html#home" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#methodology" class="nav-link">Methodology</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="calculator.html" class="nav-link nav-item-protected">Calculator</a>
+                <a href="planner.html" class="nav-link active nav-item-protected">Planner</a>
+                <a href="index.html#privacy" class="nav-link">Privacy</a>
+                <a href="login.html" class="nav-btn-login-mobile">Login</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="login.html" class="btn-login-nav" id="login-nav-trigger">Login</a>
+                <button class="hamburger-toggle" id="hamburger-toggle" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Title / Hero Area -->
+    <section class="calculator-hero-section" style="padding: 70px 0 40px; background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 100%); border-bottom: 1px solid #e2e8f0;">
+        <div class="container text-center">
+            <span class="section-label" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 30px; background: rgba(5, 150, 105, 0.1); color: #047857; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">Decarbonization Pathway</span>
+            <h1 class="section-title" style="font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; color: #0f172a; margin-top: 14px; margin-bottom: 8px;">Net-Zero Transition Planner</h1>
+            <div class="title-bar" style="width: 60px; height: 4px; background: #059669; margin: 0 auto 16px; border-radius: 2px;"></div>
+            <p class="section-desc" style="max-width: 720px; margin: 0 auto; color: #475569; font-size: 1.05rem; line-height: 1.6;">
+                Model multi-year mitigation projects, estimate required capital expenditure (CapEx), payback horizons, and project your campus emissions trajectory toward 2036 net-zero benchmarks.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Transition Planner Suite -->
+    <section class="planner-section" id="planner" style="padding: 60px 0 90px; background: #ffffff;">
+        <div class="container">
+            
+            <div class="planner-wrapper">
+                <!-- Left: Checklist of Initiatives -->
+                <div class="planner-initiatives">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <h3 class="planner-subtitle" style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 0;">Select Mitigation Initiatives</h3>
+                        <span style="font-size: 0.82rem; color: #059669; font-weight: 600; background: #ecfdf5; padding: 4px 10px; border-radius: 20px;">Interactive Simulation</span>
+                    </div>
+
+                    <div class="initiatives-list">
+                        
+                        <!-- Initiative 1 -->
+                        <label class="initiative-card glass-card" for="init-solar">
+                            <div class="initiative-header">
+                                <input type="checkbox" id="init-solar">
+                                <span class="custom-checkbox"></span>
+                                <div class="initiative-title-box">
+                                    <h4>Solar Rooftop Array (50 kW)</h4>
+                                    <span class="init-scope-badge scope2">Scope 2</span>
+                                </div>
+                            </div>
+                            <p class="initiative-desc">Install on-site photovoltaic solar panels to offset grid electricity consumption across main academic buildings.</p>
+                            <div class="initiative-meta">
+                                <span><strong>Est. CapEx:</strong> $45,000</span>
+                                <span><strong>Payback:</strong> ~5 Years</span>
+                                <span class="savings-text"><strong>Impact:</strong> -30% Electricity</span>
+                            </div>
+                        </label>
+
+                        <!-- Initiative 2 -->
+                        <label class="initiative-card glass-card" for="init-ev">
+                            <div class="initiative-header">
+                                <input type="checkbox" id="init-ev">
+                                <span class="custom-checkbox"></span>
+                                <div class="initiative-title-box">
+                                    <h4>EV Campus Fleet Transition</h4>
+                                    <span class="init-scope-badge scope1">Scope 1</span>
+                                </div>
+                            </div>
+                            <p class="initiative-desc">Replace gasoline and diesel campus shuttle buses and maintenance vehicles with electric alternatives.</p>
+                            <div class="initiative-meta">
+                                <span><strong>Est. CapEx:</strong> $60,000</span>
+                                <span><strong>Payback:</strong> ~6 Years</span>
+                                <span class="savings-text"><strong>Impact:</strong> -80% Fleet Fuel</span>
+                            </div>
+                        </label>
+
+                        <!-- Initiative 3 -->
+                        <label class="initiative-card glass-card" for="init-led">
+                            <div class="initiative-header">
+                                <input type="checkbox" id="init-led">
+                                <span class="custom-checkbox"></span>
+                                <div class="initiative-title-box">
+                                    <h4>LED Lighting &amp; Smart HVAC Retrofit</h4>
+                                    <span class="init-scope-badge scope2">Scope 2</span>
+                                </div>
+                            </div>
+                            <p class="initiative-desc">Upgrade campus buildings to smart sensor LED fixtures and variable-refrigerant energy-efficient HVAC units.</p>
+                            <div class="initiative-meta">
+                                <span><strong>Est. CapEx:</strong> $15,000</span>
+                                <span><strong>Payback:</strong> ~3.5 Years</span>
+                                <span class="savings-text"><strong>Impact:</strong> -15% Electricity</span>
+                            </div>
+                        </label>
+
+                        <!-- Initiative 4 -->
+                        <label class="initiative-card glass-card" for="init-waste">
+                            <div class="initiative-header">
+                                <input type="checkbox" id="init-waste">
+                                <span class="custom-checkbox"></span>
+                                <div class="initiative-title-box">
+                                    <h4>Zero-Waste Composting &amp; Recycling</h4>
+                                    <span class="init-scope-badge scope3">Scope 3</span>
+                                </div>
+                            </div>
+                            <p class="initiative-desc">Establish on-campus biodigestion for canteen food waste and multi-stream waste diversion collection.</p>
+                            <div class="initiative-meta">
+                                <span><strong>Est. CapEx:</strong> $8,000</span>
+                                <span><strong>Payback:</strong> ~2 Years</span>
+                                <span class="savings-text"><strong>Impact:</strong> -60% Waste</span>
+                            </div>
+                        </label>
+
+                        <!-- Initiative 5 -->
+                        <label class="initiative-card glass-card" for="init-paper">
+                            <div class="initiative-header">
+                                <input type="checkbox" id="init-paper">
+                                <span class="custom-checkbox"></span>
+                                <div class="initiative-title-box">
+                                    <h4>100% Paperless Digital Administration</h4>
+                                    <span class="init-scope-badge scope3">Scope 3</span>
+                                </div>
+                            </div>
+                            <p class="initiative-desc">Transition student admissions, examinations, course materials, and departmental receipts to digital channels.</p>
+                            <div class="initiative-meta">
+                                <span><strong>Est. CapEx:</strong> $3,000</span>
+                                <span><strong>Payback:</strong> ~1 Year</span>
+                                <span class="savings-text"><strong>Impact:</strong> -90% Paper</span>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Right: 10-Year Trajectory SVG Chart and Summary KPIs -->
+                <div class="planner-chart-card glass-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.04);">
+                    <div class="planner-chart-header">
+                        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: #0f172a; margin-bottom: 4px;">10-Year Decarbonization Trajectory</h3>
+                        <p style="color: #64748b; font-size: 0.9rem;">Simulated pathway vs. Business-As-Usual (BAU) (+1.5%/yr expansion rate)</p>
+                    </div>
+
+                    <!-- Forecast KPI Summary Row -->
+                    <div class="planner-kpis">
+                        <div class="planner-kpi" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                            <span class="kpi-label">Simulated Reduction</span>
+                            <div class="kpi-value-wrapper text-emerald">
+                                <span class="kpi-num" id="planner-reduction-tons">0.00</span>
+                                <span class="kpi-unit">tCO₂e/yr</span>
+                            </div>
+                        </div>
+                        <div class="planner-kpi" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                            <span class="kpi-label">Reduction Percentage</span>
+                            <div class="kpi-value-wrapper text-emerald">
+                                <span class="kpi-num" id="planner-reduction-pct">0</span>
+                                <span class="kpi-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="planner-kpi" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                            <span class="kpi-label">Cumulative CapEx</span>
+                            <div class="kpi-value-wrapper">
+                                <span class="kpi-unit">$</span>
+                                <span class="kpi-num" id="planner-total-capex">0</span>
+                            </div>
+                        </div>
+                        <div class="planner-kpi" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                            <span class="kpi-label">Est. Payback Period</span>
+                            <div class="kpi-value-wrapper">
+                                <span class="kpi-num" id="planner-avg-payback">0.0</span>
+                                <span class="kpi-unit">years</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forecast SVG Graph -->
+                    <div class="forecast-chart-container" style="background: #ffffff; border: 1px solid #f1f5f9;">
+                        <div class="y-axis-labels-forecast">
+                            <span class="y-label-max" id="forecast-y-max">120t</span>
+                            <span class="y-label-mid2" id="forecast-y-mid2">80t</span>
+                            <span class="y-label-mid1" id="forecast-y-mid1">40t</span>
+                            <span class="y-label-min" id="forecast-y-min">0t</span>
+                        </div>
+                        
+                        <div class="forecast-chart-wrapper" id="forecast-chart-wrapper">
+                            <svg class="forecast-chart-svg" viewBox="0 0 500 250" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="forecast-grad-emerald" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/>
+                                        <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                    <linearGradient id="forecast-grad-grey" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#ef4444" stop-opacity="0.1"/>
+                                        <stop offset="100%" stop-color="#ef4444" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                
+                                <!-- Grid Lines -->
+                                <line x1="0" y1="0" x2="500" y2="0" class="chart-grid-line-svg" />
+                                <line x1="0" y1="62.5" x2="500" y2="62.5" class="chart-grid-line-svg" />
+                                <line x1="0" y1="125" x2="500" y2="125" class="chart-grid-line-svg" />
+                                <line x1="0" y1="187.5" x2="500" y2="187.5" class="chart-grid-line-svg" />
+                                <line x1="0" y1="250" x2="500" y2="250" class="chart-grid-line-svg" />
+                                
+                                <!-- Target Net-Zero Indicator line -->
+                                <line x1="0" y1="230" x2="500" y2="230" class="chart-net-zero-line" stroke-dasharray="5 5" />
+                                
+                                <!-- Baseline BAU Area and Path -->
+                                <path id="chart-path-bau-area" d="" fill="url(#forecast-grad-grey)" />
+                                <path id="chart-path-bau" d="" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6 4" />
+
+                                <!-- Decarbonization Area and Path -->
+                                <path id="chart-path-decarb-area" d="" fill="url(#forecast-grad-emerald)" />
+                                <path id="chart-path-decarb" d="" fill="none" stroke="#10B981" stroke-width="3.5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- X Axis Labels -->
+                    <div class="forecast-x-axis">
+                        <span>2026</span>
+                        <span>2028</span>
+                        <span>2030</span>
+                        <span>2032</span>
+                        <span>2034</span>
+                        <span>2036</span>
+                    </div>
+
+                    <!-- Chart Legend -->
+                    <div class="forecast-legend" style="border-top: 1px solid #f1f5f9; padding-top: 16px;">
+                        <div class="legend-item">
+                            <span class="legend-line line-bau"></span>
+                            <span>Business-As-Usual (BAU) baseline</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line line-decarb"></span>
+                            <span>Projected Decarbonization Pathway</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line line-target"></span>
+                            <span>Net-Zero Benchmark Alignment</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Callout Linking to Calculator -->
+            <div style="margin-top: 50px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 28px 36px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h4 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 6px 0;">Need detailed institutional inventory accounting?</h4>
+                    <p style="color: #64748b; font-size: 0.95rem; margin: 0;">Access the complete activity ledger for fleet, generators, solar geysers, campus trees, and generate certified PDF audit reports.</p>
+                </div>
+                <a href="calculator.html" class="btn btn-primary" style="padding: 12px 24px; font-weight: 700; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px;">
+                    <span>Open Footprint Calculator</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col brand-col">
+                    <a href="index.html#home" class="logo">
+                        <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8.5C18.4 18 14.5 20 11 20z"></path>
+                        </svg>
+                        <span>Carbon<span>Track</span></span>
+                    </a>
+                    <p class="quote">"Small actions create a greener future."</p>
+                    <p class="footer-about">An academic research portal focused on localized carbon indices and smart consumption models.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#home">Home</a></li>
+                        <li><a href="index.html#about">About Platform</a></li>
+                        <li><a href="calculator.html">Footprint Calculator</a></li>
+                        <li><a href="planner.html" class="active">Transition Planner</a></li>
+                        <li><a href="index.html#methodology">Our Methodology</a></li>
+                        <li><a href="index.html#features">Core Features</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact &amp; Research</h4>
+                    <ul class="footer-contact">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="footer-icon">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <span>research@carbontrack.org</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications System -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="env.js" onerror="/* env.js is local/optional */"></script>
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js?v=3.0"></script>
+    <script src="script.js?v=3.0"></script>
+    <script>
+        // Dedicated standalone planner initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.calculateForecastPathway === 'function') {
+                window.calculateForecastPathway();
+            }
+        });
+    </script>
+</body>
+</html>

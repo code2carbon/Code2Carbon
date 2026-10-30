@@ -32,14 +32,14 @@
                 <a href="index.html#about" class="nav-link">About</a>
                 <a href="index.html#methodology" class="nav-link">Methodology</a>
                 <a href="index.html#features" class="nav-link">Features</a>
-                <a href="calculator.html" class="nav-link active">Calculator</a>
-                <a href="index.html#planner" class="nav-link">Planner</a>
+                <a href="calculator.html" class="nav-link active nav-item-protected">Calculator</a>
+                <a href="planner.html" class="nav-link nav-item-protected">Planner</a>
                 <a href="index.html#privacy" class="nav-link">Privacy</a>
-                <a href="index.html#login" class="nav-btn-login-mobile">Login</a>
+                <a href="login.html" class="nav-btn-login-mobile">Login</a>
             </nav>
 
             <div class="nav-actions">
-                <a href="index.html#login" class="btn-login-nav" id="login-nav-trigger">Login</a>
+                <a href="login.html" class="btn-login-nav" id="login-nav-trigger">Login</a>
                 <button class="hamburger-toggle" id="hamburger-toggle" aria-label="Toggle Menu">
                     <span></span>
                     <span></span>
@@ -888,6 +888,15 @@
 
                 <!-- Summary Dashboard Widget (Static Card) -->
                 <div class="sticky-summary-widget shadow-reveal" id="summary-widget">
+                    <!-- User Session Indicator Banner -->
+                    <div id="calc-user-session-indicator" style="display: none; align-items: center; justify-content: space-between; background: #ecfdf5; border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 6px 14px; margin-bottom: 10px; font-size: 0.82rem; color: #065f46;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="auth-badge-dot" style="display: inline-block;"></span>
+                            <span id="calc-user-session-text">Session Active</span>
+                        </div>
+                        <span style="font-weight: 600; color: #047857; font-size: 0.75rem;">Account Data Linked</span>
+                    </div>
+
                     <div class="summary-widget-container">
                         <div class="summary-stat-box">
                             <span class="stat-label">Gross Emissions</span>
@@ -902,6 +911,7 @@
                             <span class="stat-value" id="summary-net">0.00 <span class="stat-unit">tCO₂e/yr</span></span>
                         </div>
                         <div class="summary-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary" id="btn-save-user-data" style="background: #047857; border-color: #065f46; color: #ffffff; font-weight: 700; padding: 8px 14px; font-size: 0.85rem;">💾 Save Assessment</button>
                             <button class="btn btn-secondary" id="btn-view-summary-report-sticky" style="background: #3b82f6; border-color: #2563eb; color: #ffffff; font-weight: 700; padding: 8px 14px; font-size: 0.85rem;">👁️ View Report (New Tab)</button>
                             <button class="btn btn-primary" id="btn-direct-download-pdf-sticky" style="background: #10b981; border-color: #059669; font-weight: 700; padding: 8px 14px; font-size: 0.85rem;">📥 Download PDF</button>
                         </div>
@@ -1052,8 +1062,11 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="script.js?v=2.0"></script>
+    <script src="env.js" onerror="/* env.js is local/optional */"></script>
+    <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js?v=2.0"></script>
+    <script src="script.js?v=2.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="calculator.js?v=2.0"></script>
     <script src="report-generator.js?v=2.0"></script>

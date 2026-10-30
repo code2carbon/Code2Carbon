@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In &bull; CarbonTrack Institutional Sustainability</title>
+    <meta name="description" content="Sign in or create your institutional CarbonTrack account to calculate, audit, and forecast your campus carbon footprint under ISO 14064-1 & GHG Protocol standards.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8.5C18.4 18 14.5 20 11 20z'/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=3.0">
+
+    <style>
+        /* Dedicated Crisp Clean White Login Page Styles */
+        body.auth-page-body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            color: #0f172a;
+            font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle ambient decorative background */
+        .auth-bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(46, 125, 50, 0.05) 0%, transparent 45%),
+                linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Top Minimal Header */
+        .auth-nav-bar {
+            width: 100%;
+            padding: 22px 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e2e8f0;
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-nav-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #0f172a;
+            font-family: var(--font-display, 'Outfit', sans-serif);
+            font-size: 1.45rem;
+            font-weight: 700;
+        }
+
+        .auth-nav-bar .logo-svg {
+            width: 28px;
+            height: 28px;
+            color: #059669;
+        }
+
+        .auth-nav-bar .logo span span {
+            color: #059669;
+        }
+
+        .auth-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #334155;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 30px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            transition: all 0.25s ease;
+        }
+
+        .auth-back-home:hover {
+            color: #059669;
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            transform: translateX(-3px);
+        }
+
+        /* Split Layout Container */
+        .auth-container-split {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .auth-split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            width: 100%;
+            align-items: center;
+        }
+
+        /* Left Side: Brand Narrative & Trust Badges */
+        .auth-narrative {
+            padding-right: 20px;
+        }
+
+        .auth-narrative-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 30px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .auth-narrative h1 {
+            font-family: var(--font-display, 'Outfit', sans-serif);
+            font-size: 2.75rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 18px;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-narrative h1 span {
+            color: #059669;
+        }
+
+        .auth-narrative p {
+            color: #475569;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 490px;
+        }
+
+        .auth-feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease;
+        }
+
+        .auth-feature-item:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #059669;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .auth-feature-text h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 3px 0;
+        }
+
+        .auth-feature-text p {
+            font-size: 0.84rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.45;
+        }
+
+        /* Right Side: Crisp White Auth Panel */
+        .auth-card-panel {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+            border: 1.5px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        .auth-card-panel .login-header {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .auth-card-panel .login-header h3 {
+            font-family: var(--font-display, 'Outfit', sans-serif);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .auth-card-panel .login-header p {
+            color: #64748b;
+            font-size: 0.94rem;
+            margin: 0;
+        }
+
+        /* Auth Tabs inside panel */
+        .auth-card-panel .auth-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 22px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .auth-card-panel .auth-tab-btn {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            background: transparent;
+            border-radius: 9px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .auth-card-panel .auth-tab-btn.active {
+            background: #ffffff;
+            color: #059669;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Form Controls */
+        .auth-card-panel .form-control {
+            margin-bottom: 16px;
+        }
+
+        .auth-card-panel .form-control label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .auth-card-panel .form-control input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .auth-card-panel .form-control input:focus {
+            outline: none;
+            border-color: #059669;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        .auth-card-panel .login-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.86rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-card-panel .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #475569;
+        }
+
+        .auth-card-panel .forgot-pass {
+            color: #059669;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-card-panel .forgot-pass:hover {
+            text-decoration: underline;
+        }
+
+        .btn-auth-main {
+            width: 100%;
+            padding: 13px 20px;
+            border-radius: 12px;
+            border: none;
+            background: #059669;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-auth-main:hover {
+            background: #047857;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-auth-main:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-card-panel .divider {
+            text-align: center;
+            margin: 22px 0;
+            position: relative;
+        }
+
+        .auth-card-panel .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .auth-card-panel .divider span {
+            background: #ffffff;
+            padding: 0 14px;
+            font-size: 0.82rem;
+            color: #94a3b8;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-google-auth {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            background: #ffffff;
+            color: #1e293b;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-google-auth:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            transform: translateY(-1px);
+        }
+
+        .auth-card-panel .login-footer-text {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .auth-card-panel .login-footer-text a {
+            color: #059669;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-card-panel .login-footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Logged In Dashboard Card State */
+        .auth-active-profile-card {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .auth-avatar-circle-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #059669;
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.25);
+            border: 3px solid #ffffff;
+            overflow: hidden;
+        }
+
+        .auth-avatar-circle-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .auth-stats-callout {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .auth-split-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .auth-narrative {
+                text-align: center;
+                padding-right: 0;
+            }
+            .auth-narrative p {
+                margin: 0 auto 24px auto;
+            }
+            .auth-feature-list {
+                display: none; /* Keep mobile view focused on auth */
+            }
+            .auth-narrative h1 {
+                font-size: 2.2rem;
+            }
+            .auth-card-panel {
+                padding: 28px 24px;
+            }
+            .auth-nav-bar {
+                padding: 18px 20px;
+            }
+        }
+    </style>
+</head>
+<body class="auth-page-body">
+
+    <!-- Subtle Background Gradient Grid -->
+    <div class="auth-bg-pattern"></div>
+
+    <!-- Top Minimal Navigation -->
+    <header class="auth-nav-bar">
+        <a href="index.html" class="logo">
+            <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8.5C18.4 18 14.5 20 11 20z"></path>
+                <path d="M19 2c-2.26 4.33-5.27 7.14-8 10"></path>
+            </svg>
+            <span>Carbon<span>Track</span></span>
+        </a>
+
+        <a href="index.html" class="auth-back-home">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back to Home</span>
+        </a>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="auth-container-split">
+        <div class="auth-split-grid">
+            
+            <!-- Left Narrative Column -->
+            <div class="auth-narrative">
+                <div class="auth-narrative-tag">
+                    <span class="pulse-dot" style="width: 8px; height: 8px; background: #059669; border-radius: 50%; display: inline-block;"></span>
+                    Institutional Climate Intelligence
+                </div>
+                <h1>Empowering Campuses Toward <span>Net-Zero Emissions</span></h1>
+                <p>
+                    Access your institution's authoritative carbon accounting suite. Calculate Scope 1, 2, and 3 inventories, benchmark progress against ISO 14064-1 standards, and simulate multi-year mitigation roadmaps.
+                </p>
+
+                <div class="auth-feature-list">
+                    <div class="auth-feature-item">
+                        <div class="auth-feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <div class="auth-feature-text">
+                            <h4>ISO 14064-1 &amp; GHG Protocol Verified</h4>
+                            <p>Authoritative carbon emission algorithms built specifically for educational &amp; corporate campuses.</p>
+                        </div>
+                    </div>
+
+                    <div class="auth-feature-item">
+                        <div class="auth-feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        </div>
+                        <div class="auth-feature-text">
+                            <h4>Per-Customer Cloud Data Isolation</h4>
+                            <p>All calculations, uploaded institution logos, and historical audit reports are permanently archived to your account.</p>
+                        </div>
+                    </div>
+
+                    <div class="auth-feature-item">
+                        <div class="auth-feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                        <div class="auth-feature-text">
+                            <h4>Interactive Mitigation Forecasting</h4>
+                            <p>Simulate rooftop solar installations, EV fleet conversions, and biophilic absorption sinks with real-time CAPEX analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Auth Card Panel -->
+            <div class="auth-card-panel">
+                
+                <div class="login-header">
+                    <h3 id="auth-panel-heading">Welcome Back</h3>
+                    <p id="auth-panel-subheading">Sign in to access your institutional carbon calculator</p>
+                </div>
+
+                <!-- Auth Tabs (Sign In / Create Account) -->
+                <div class="auth-tabs" id="auth-tabs">
+                    <button type="button" class="auth-tab-btn active" data-tab="signin" id="tab-btn-signin">Sign In</button>
+                    <button type="button" class="auth-tab-btn" data-tab="signup" id="tab-btn-signup">Create Account</button>
+                </div>
+
+                <!-- Login / Sign Up Form -->
+                <form class="login-form" id="login-form">
+                    
+                    <div class="form-control" id="signup-name-group" style="display: none;">
+                        <label for="login-name">Full Name / Organization Lead</label>
+                        <input type="text" id="login-name" placeholder="Dr. Jane Doe / Sustainability Officer">
+                    </div>
+
+                    <div class="form-control">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="name@institution.edu" autocomplete="email">
+                    </div>
+
+                    <div class="form-control">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+
+                    <div class="login-actions-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me" checked>
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-pass">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-auth-main" id="btn-auth-submit">
+                        <span>Sign In</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+
+                <!-- Google OAuth Button -->
+                <button type="button" class="btn-google-auth" id="btn-google-login">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                    </svg>
+                    <span>Sign in with Google</span>
+                </button>
+
+                <div class="login-footer-text">
+                    <span id="auth-switch-text">Don't have an institutional profile?</span>
+                    <a href="#" id="link-toggle-signup">Create account</a>
+                </div>
+
+                <!-- Logged-in Profile Card (Displayed when Session is already active) -->
+                <div class="auth-active-profile-card" id="auth-profile-card" style="display: none;">
+                    <div class="auth-avatar-circle-large" id="auth-profile-avatar">U</div>
+                    <h3 class="auth-user-name" id="auth-profile-name" style="color: #0f172a; margin-bottom: 4px;">User</h3>
+                    <p class="auth-user-email" id="auth-profile-email" style="color: #64748b; font-size: 0.92rem; margin-bottom: 14px;">user@domain.com</p>
+
+                    <div class="auth-badge-active" style="margin-bottom: 18px;">
+                        <span class="auth-badge-dot"></span>
+                        <span id="auth-provider-badge">Active Session</span>
+                    </div>
+
+                    <div class="auth-stats-callout">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Saved Assessments</span>
+                            <span id="auth-submissions-count" style="font-size: 0.9rem; font-weight: 700; color: #059669;">0 assessments</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #64748b; margin: 0; line-height: 1.4;">
+                            You are fully authenticated. The Footprint Calculator and Transition Planner services are now available in your navigation.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="calculator.html" class="btn-auth-main" style="text-decoration: none;">
+                            <span>Launch Carbon Footprint Calculator</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                        <a href="planner.html" class="btn btn-secondary btn-block" style="background: #f1f5f9; border-color: #cbd5e1; color: #1e293b; text-decoration: none; padding: 12px; font-weight: 600; border-radius: 12px;">
+                            View Mitigation Planner &rarr;
+                        </a>
+                        <button type="button" class="btn btn-signout btn-block" id="btn-auth-signout" style="margin-top: 6px;">
+                            Sign Out of Account
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Notifications System -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="env.js" onerror="/* env.js is local/optional */"></script>
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js?v=3.0"></script>
+    <script>
+        // Check for redirect param
+        window.addEventListener('carbontrack:auth-changed', (e) => {
+            if (e.detail && e.detail.user && e.detail.event === 'SIGNED_IN') {
+                const params = new URLSearchParams(window.location.search);
+                const redirect = params.get('redirect');
+                if (redirect) {
+                    setTimeout(() => {
+                        window.location.href = redirect;
+                    }, 800);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
