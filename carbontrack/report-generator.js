@@ -54,9 +54,13 @@
         const orgWebsite = document.getElementById('org-website')?.value?.trim() || 'https://institution.edu.in';
         const campusAreaAcres = parseFloat(document.getElementById('org-total-area')?.value) || 0;
         const builtUpSqm = parseFloat(document.getElementById('org-builtup-area')?.value) || 0;
-        const totalPopulation = parseFloat(document.getElementById('org-population')?.value) || 0;
-        const studentCount = parseFloat(document.getElementById('inst-num-students')?.value) || 0;
+        let totalPopulation = parseFloat(document.getElementById('org-population')?.value) || 0;
+        const studentCount = parseFloat(document.getElementById('inst-num-students')?.value) || 
+                             parseFloat(document.getElementById('paper-student-input')?.value) || 0;
         const facultyCount = parseFloat(document.getElementById('inst-num-faculty-staff')?.value) || 0;
+        if (totalPopulation === 0 && (studentCount > 0 || facultyCount > 0)) {
+            totalPopulation = studentCount + facultyCount;
+        }
         const latitude = document.getElementById('org-lat')?.value || '20.33° N';
         const longitude = document.getElementById('org-lng')?.value || '74.23° E';
         const elevation = document.getElementById('org-elevation')?.value ? `${document.getElementById('org-elevation').value} m` : '585 m';
@@ -93,12 +97,24 @@
         let generatorKg = 0;
         const genRows = document.querySelectorAll('#generator-rows-container tr');
         genRows.forEach((row) => {
-            const liters = parseFloat(row.querySelector('.generator-liters')?.value) || 0;
+            const monthlyLiters = parseFloat(row.querySelector('.generator-diesel')?.value) || 
+                                  parseFloat(row.querySelector('.generator-liters')?.value) || 0;
             const factor = parseFloat(row.querySelector('.generator-factor')?.value) || EMISSION_FACTORS.diesel;
-            const kg = liters * factor;
-            genLiters += liters;
+            const annualLiters = monthlyLiters * 12;
+            const annualCellKg = parseFloat(row.querySelector('.generator-annual')?.textContent);
+            const kg = !isNaN(annualCellKg) && annualCellKg > 0 ? annualCellKg : (annualLiters * factor);
+            genLiters += annualLiters;
             generatorKg += kg;
         });
+
+        // Fallback to final summary element if rows yielded 0
+        if (generatorKg === 0) {
+            const finalGen = parseFloat(document.getElementById('final-generator-emission')?.textContent) || 0;
+            if (finalGen > 0) {
+                generatorKg = finalGen;
+                genLiters = generatorKg / EMISSION_FACTORS.diesel;
+            }
+        }
 
         if (generatorKg > 0) {
             sources.push({
@@ -122,7 +138,8 @@
             const weight = parseFloat(row.querySelector('.lpg-weight')?.value) || 19;
             const factor = parseFloat(row.querySelector('.lpg-factor')?.value) || EMISSION_FACTORS.lpg;
             const annualKgLpg = cyl * weight * 12;
-            const kgCo2 = annualKgLpg * factor;
+            const annualCellKg = parseFloat(row.querySelector('.lpg-annual')?.textContent);
+            const kgCo2 = !isNaN(annualCellKg) && annualCellKg > 0 ? annualCellKg : (annualKgLpg * factor);
             lpgKgUsed += annualKgLpg;
             lpgEmissionKg += kgCo2;
         });
@@ -131,6 +148,15 @@
         if (lpgSingleInput > 0 && lpgRows.length === 0) {
             lpgKgUsed = lpgSingleInput;
             lpgEmissionKg = lpgKgUsed * EMISSION_FACTORS.lpg;
+        }
+
+        // Fallback to final summary element if rows yielded 0
+        if (lpgEmissionKg === 0) {
+            const finalLpg = parseFloat(document.getElementById('final-lpg-emission')?.textContent) || 0;
+            if (finalLpg > 0) {
+                lpgEmissionKg = finalLpg;
+                lpgKgUsed = lpgEmissionKg / EMISSION_FACTORS.lpg;
+            }
         }
 
         if (lpgEmissionKg > 0) {
@@ -151,15 +177,26 @@
         let electricityKg = 0;
         const energyRows = document.querySelectorAll('#energy-rows-container tr');
         energyRows.forEach((row) => {
-            const kwh = parseFloat(row.querySelector('.energy-consumption')?.value) || 0;
+            const monthlyKwh = parseFloat(row.querySelector('.energy-consumption')?.value) || 0;
             const factor = parseFloat(row.querySelector('.energy-factor')?.value) || EMISSION_FACTORS.electricity;
             const type = row.querySelector('.energy-type')?.value || 'purchased-grid';
             if (type !== 'solar-power' && type !== 'wind-power') {
-                const kg = kwh * factor;
-                electricityKwh += kwh;
+                const annualKwh = monthlyKwh * 12;
+                const annualCellKg = parseFloat(row.querySelector('.energy-annual')?.textContent);
+                const kg = !isNaN(annualCellKg) && annualCellKg > 0 ? annualCellKg : (annualKwh * factor);
+                electricityKwh += annualKwh;
                 electricityKg += kg;
             }
         });
+
+        // Fallback to final summary element if rows yielded 0
+        if (electricityKg === 0) {
+            const finalElec = parseFloat(document.getElementById('final-electricity-emission')?.textContent) || 0;
+            if (finalElec > 0) {
+                electricityKg = finalElec;
+                electricityKwh = electricityKg / EMISSION_FACTORS.electricity;
+            }
+        }
 
         if (electricityKg > 0) {
             sources.push({
@@ -179,12 +216,28 @@
         let paperKgUsed = 0;
         const paperRows = document.querySelectorAll('#paper-rows-container tr');
         paperRows.forEach((row) => {
-            const kg = parseFloat(row.querySelector('.paper-kg')?.value) || 0;
+            const kg = parseFloat(row.querySelector('.paper-qty')?.value) || 
+                       parseFloat(row.querySelector('.paper-kg')?.value) || 0;
             paperKgUsed += kg;
         });
+
+        // Add student paper consumption (Students * 12 * 125 * 0.0005 = Students * 0.75 kg/yr)
+        const studentPaperCount = parseFloat(document.getElementById('paper-student-input')?.value) || studentCount || 0;
+        const studentPaperKg = studentPaperCount * 12 * 125 * 0.0005;
+        paperKgUsed += studentPaperKg;
+
         const paperSingleInput = parseFloat(document.getElementById('paper-kg-input')?.value) || 0;
-        if (paperSingleInput > 0 && paperRows.length === 0) paperKgUsed = paperSingleInput;
-        const paperEmissionKg = paperKgUsed * EMISSION_FACTORS.paper;
+        if (paperSingleInput > 0 && paperRows.length === 0 && studentPaperKg === 0) paperKgUsed = paperSingleInput;
+        let paperEmissionKg = paperKgUsed * EMISSION_FACTORS.paper;
+
+        // Fallback to final summary element if rows yielded 0
+        if (paperEmissionKg === 0) {
+            const finalPaper = parseFloat(document.getElementById('final-paper-emission')?.textContent) || 0;
+            if (finalPaper > 0) {
+                paperEmissionKg = finalPaper;
+                paperKgUsed = paperEmissionKg / EMISSION_FACTORS.paper;
+            }
+        }
 
         if (paperEmissionKg > 0) {
             sources.push({
@@ -199,8 +252,9 @@
             });
         }
 
-        // 2. Campus Vehicles (Scope 1 Fleet vs Scope 3 Commuter)
+        // 2. Campus Vehicles (Scope 1 Fleet vs Scope 2 Electric vs Scope 3 Commuter)
         let transportScope1Kg = 0;
+        let transportScope2Kg = 0;
         let transportScope3Kg = 0;
         const vehicleRows = document.querySelectorAll('#vehicle-rows-container tr');
         vehicleRows.forEach((row) => {
@@ -216,15 +270,17 @@
 
             if (annualKg > 0) {
                 const isScope1 = (ownership === 'institute-owned' && fuel !== 'electric');
-                const targetScope = isScope1 ? 1 : 3;
+                const isScope2 = (ownership === 'institute-owned' && fuel === 'electric');
+                const targetScope = isScope1 ? 1 : (isScope2 ? 2 : 3);
 
                 if (isScope1) transportScope1Kg += annualKg;
+                else if (isScope2) transportScope2Kg += annualKg;
                 else transportScope3Kg += annualKg;
 
                 sources.push({
                     id: `vehicle-${sources.length}`,
                     scope: targetScope,
-                    category: `Scope ${targetScope} – ${isScope1 ? 'Institutional Fleet Transit' : 'Daily Commuting Transit'}`,
+                    category: `Scope ${targetScope} – ${isScope1 ? 'Institutional Fleet Transit' : (isScope2 ? 'EV Institutional Fleet' : 'Daily Commuting Transit')}`,
                     name: `Campus Vehicles (${type.toUpperCase()} - ${fuel.toUpperCase()})`,
                     activityData: `${count} units, ~${dist} km daily`,
                     factor: `${factor} kg CO₂e/unit-km`,
@@ -234,8 +290,26 @@
             }
         });
 
+        // Fallback for vehicles if no rows yielded emissions but summary has value
+        if (transportScope1Kg === 0 && transportScope2Kg === 0 && transportScope3Kg === 0) {
+            const finalVeh = parseFloat(document.getElementById('final-vehicle-emission')?.textContent) || 0;
+            if (finalVeh > 0) {
+                transportScope3Kg = finalVeh;
+                sources.push({
+                    id: `vehicle-${sources.length}`,
+                    scope: 3,
+                    category: 'Scope 3 – Daily Commuting Transit',
+                    name: 'Campus Transportation & Commuter Travel',
+                    activityData: `Aggregated fleet transit`,
+                    factor: `Standard fleet factor`,
+                    kg: finalVeh,
+                    tons: finalVeh / 1000
+                });
+            }
+        }
+
         const totalScope1Kg = generatorKg + lpgEmissionKg + transportScope1Kg;
-        const totalScope2Kg = electricityKg;
+        const totalScope2Kg = electricityKg + transportScope2Kg;
         const totalScope3Kg = paperEmissionKg + transportScope3Kg;
 
         // --- OFFSETS ---
@@ -246,10 +320,21 @@
         solarRows.forEach((row) => {
             const kwh = parseFloat(row.querySelector('.solar-capacity')?.value) || 0;
             const factor = parseFloat(row.querySelector('.solar-factor')?.value) || EMISSION_FACTORS.electricity;
-            const offset = parseFloat(row.querySelector('.solar-offset')?.textContent) || (kwh * factor);
+            const offsetCell = parseFloat(row.querySelector('.solar-result')?.textContent) || 
+                               parseFloat(row.querySelector('.solar-offset')?.textContent);
+            const offset = !isNaN(offsetCell) && offsetCell > 0 ? offsetCell : (kwh * factor);
             solarKwhGen += kwh;
             solarOffsetKg += offset;
         });
+
+        // Fallback to summary span if rows yielded 0
+        if (solarOffsetKg === 0) {
+            const finalSol = parseFloat(document.getElementById('final-solar-offset')?.textContent) || 0;
+            if (finalSol > 0) {
+                solarOffsetKg = finalSol;
+                solarKwhGen = solarOffsetKg / EMISSION_FACTORS.electricity;
+            }
+        }
 
         // 2. Tree Sequestration Offset
         let treeCountTotal = 0;
@@ -261,20 +346,37 @@
             const species = formatSpeciesName(speciesSlug);
             const count = parseFloat(row.querySelector('.tree-count')?.value) || 0;
             const rate = parseFloat(row.querySelector('.tree-factor')?.value) || 21.77;
-            const abs = parseFloat(row.querySelector('.tree-absorption')?.textContent) || (count * rate);
+            const absCell = parseFloat(row.querySelector('.tree-absorption-result')?.textContent) || 
+                            parseFloat(row.querySelector('.tree-absorption')?.textContent);
+            const abs = !isNaN(absCell) && absCell > 0 ? absCell : (count * rate);
 
             treeCountTotal += count;
             treeOffsetKg += abs;
-            if (count > 0) {
+            if (count > 0 || abs > 0) {
                 treeSpeciesList.push({ species, count, rate, absorption: abs });
             }
         });
+
+        // Fallback to summary span if rows yielded 0
+        if (treeOffsetKg === 0) {
+            const finalTrees = parseFloat(document.getElementById('final-trees-offset')?.textContent) || 0;
+            if (finalTrees > 0) {
+                treeOffsetKg = finalTrees;
+                if (treeSpeciesList.length === 0) {
+                    treeSpeciesList.push({ species: 'Campus Greenery & Canopy Trees', count: Math.round(treeOffsetKg / 21.77), rate: 21.77, absorption: treeOffsetKg });
+                }
+            }
+        }
 
         // 3. Waste Offset
         let wasteOffsetKg = 0;
         const wasteRows = document.querySelectorAll('#waste-rows-container tr');
         wasteRows.forEach((row) => {
-            const offset = parseFloat(row.querySelector('.waste-offset')?.textContent) || 0;
+            const qty = parseFloat(row.querySelector('.waste-qty')?.value) || 0;
+            const factor = parseFloat(row.querySelector('.waste-factor')?.value) || 0;
+            const offsetCell = parseFloat(row.querySelector('.waste-result')?.textContent) || 
+                               parseFloat(row.querySelector('.waste-offset')?.textContent);
+            const offset = !isNaN(offsetCell) && offsetCell > 0 ? offsetCell : (qty * factor);
             wasteOffsetKg += offset;
         });
 
@@ -2205,17 +2307,20 @@
         const aiResponse = await fetchAIInsights(model);
         const reportHtml = buildAccreditedReportHTML(model, aiResponse);
         const cleanName = model.institution.name.replace(/[^a-zA-Z0-9_-]/g, '_');
+        const filename = `${cleanName}_Carbon_Footprint_Assessment_Report.pdf`;
 
         // Create temporary container
         const tempContainer = document.createElement('div');
         tempContainer.id = 'active-pdf-export-container';
-        tempContainer.style.position = 'fixed';
+        tempContainer.style.position = 'absolute';
         tempContainer.style.top = '0';
         tempContainer.style.left = '0';
         tempContainer.style.width = '210mm';
+        tempContainer.style.minHeight = '100%';
         tempContainer.style.background = '#ffffff';
         tempContainer.style.zIndex = '999999';
         tempContainer.style.opacity = '1';
+        tempContainer.style.overflow = 'visible';
         tempContainer.innerHTML = reportHtml;
 
         document.body.appendChild(tempContainer);
@@ -2223,15 +2328,69 @@
         // Run post-render dynamic pagination
         paginateReport(tempContainer);
 
-        const opt = {
-            margin: [0, 0, 0, 0],
-            filename: `${cleanName}_Carbon_Footprint_Assessment_Report.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 794 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+        const pages = tempContainer.querySelectorAll('.report-page');
+        const totalPages = pages.length;
 
+        // Try page-by-page rendering using html2canvas & jsPDF to prevent browser canvas height limit crashes
+        const html2canvasFn = window.html2canvas;
+        const JsPdfClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+
+        if (html2canvasFn && JsPdfClass && totalPages > 0) {
+            try {
+                const pdf = new JsPdfClass({
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait',
+                    compress: true
+                });
+
+                for (let i = 0; i < totalPages; i++) {
+                    const pageEl = pages[i];
+                    if (typeof window.showToast === 'function' && (i % 4 === 0 || i === totalPages - 1)) {
+                        window.showToast(`Rendering page ${i + 1} of ${totalPages}...`, 'info');
+                    }
+
+                    const canvas = await html2canvasFn(pageEl, {
+                        scale: 1.5,
+                        useCORS: true,
+                        logging: false,
+                        windowWidth: 794,
+                        scrollY: 0
+                    });
+
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    if (i > 0) {
+                        pdf.addPage('a4', 'portrait');
+                    }
+                    pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+                }
+
+                pdf.save(filename);
+
+                if (document.body.contains(tempContainer)) {
+                    document.body.removeChild(tempContainer);
+                }
+
+                if (typeof window.showToast === 'function') {
+                    window.showToast('PDF downloaded successfully!', 'success');
+                }
+                return;
+            } catch (err) {
+                console.warn('Page-by-page PDF generation error, trying html2pdf fallback:', err);
+            }
+        }
+
+        // Fallback to html2pdf if available
         if (typeof window.html2pdf !== 'undefined') {
+            const opt = {
+                margin: [0, 0, 0, 0],
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 1.2, useCORS: true, logging: false, windowWidth: 794, scrollY: 0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] }
+            };
+
             window.html2pdf().set(opt).from(tempContainer).save().then(() => {
                 if (document.body.contains(tempContainer)) {
                     document.body.removeChild(tempContainer);

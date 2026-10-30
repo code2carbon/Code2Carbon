@@ -593,8 +593,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Monthly Emission = Number of Cylinders × Cylinder Weight × 2.988
         const monthly = cylinders * weight * factor;
-        // Annual Emission = Monthly × 12 × 2.988 (to match Excel sheet formula)
-        const annual = monthly * 12 * factor;
+        // Annual Emission = Monthly × 12
+        const annual = monthly * 12;
 
         row.querySelector('.lpg-monthly').textContent = monthly.toFixed(2);
         row.querySelector('.lpg-annual').textContent = annual.toFixed(2);
@@ -705,6 +705,14 @@ document.addEventListener('DOMContentLoaded', () => {
             calculateSummary();
         });
     }
+
+    [instTotalPopulation, instNumStudents, instNumFacultyStaff, instCampusArea, instBuiltupArea].forEach(inp => {
+        if (inp) {
+            inp.addEventListener('input', () => {
+                calculateSummary();
+            });
+        }
+    });
 
     /* ==========================================
        5. Green Cover / Trees Table Logic
@@ -1058,13 +1066,13 @@ document.addEventListener('DOMContentLoaded', () => {
             grossKg += diesel * fact * 12; // Annualize it
         });
 
-        // 4. LPG Annual Emissions (matching Excel formula multiplying by factor twice)
+        // 4. LPG Annual Emissions
         const lRows = lpgContainer.querySelectorAll('tr');
         lRows.forEach(row => {
             const cylinders = parseFloat(row.querySelector('.lpg-cylinders').value) || 0;
             const weight = parseFloat(row.querySelector('.lpg-weight').value) || 0;
             const fact = parseFloat(row.querySelector('.lpg-factor').value) || 2.988;
-            grossKg += cylinders * weight * fact * 12 * fact;
+            grossKg += cylinders * weight * 12 * fact;
         });
 
         // 5. Paper Annual Emissions
@@ -1146,7 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cylinders = parseFloat(row.querySelector('.lpg-cylinders').value) || 0;
             const weight = parseFloat(row.querySelector('.lpg-weight').value) || 0;
             const fact = parseFloat(row.querySelector('.lpg-factor').value) || 2.988;
-            lpgSum += cylinders * weight * fact * 12 * fact;
+            lpgSum += cylinders * weight * 12 * fact;
         });
 
         // 5. Paper
@@ -1208,6 +1216,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 elNet.style.color = '#c0392b'; // red
             } else {
                 elNet.style.color = '#27ae60'; // green
+            }
+        }
+
+        // Update Institution Analytics & Performance Indicators
+        const instPopVal = Math.max(0, parseInt(instTotalPopulation ? instTotalPopulation.value : 0) || 0);
+        const instStudVal = Math.max(0, parseInt(instNumStudents ? instNumStudents.value : 0) || 0);
+        const instFacVal = Math.max(0, parseInt(instNumFacultyStaff ? instNumFacultyStaff.value : 0) || 0);
+        const effectivePop = instPopVal > 0 ? instPopVal : (instStudVal + instFacVal);
+        const campusAreaVal = parseFloat(instCampusArea ? instCampusArea.value : 0) || 0;
+        const builtupAreaVal = parseFloat(instBuiltupArea ? instBuiltupArea.value : 0) || 0;
+
+        if (analyticsPopulationSpan) {
+            analyticsPopulationSpan.textContent = effectivePop > 0 ? effectivePop.toLocaleString() : '—';
+        }
+        if (analyticsStudentsSpan) {
+            analyticsStudentsSpan.textContent = instStudVal > 0 ? instStudVal.toLocaleString() : '—';
+        }
+        if (analyticsCampusAreaSpan) {
+            analyticsCampusAreaSpan.textContent = campusAreaVal > 0 ? `${campusAreaVal.toLocaleString()} acres` : '—';
+        }
+        if (analyticsBuiltupAreaSpan) {
+            analyticsBuiltupAreaSpan.textContent = builtupAreaVal > 0 ? `${builtupAreaVal.toLocaleString()} m²` : '—';
+        }
+        if (analyticsPerCapitaSpan) {
+            if (effectivePop > 0) {
+                const perCapKg = netFootprint / effectivePop;
+                analyticsPerCapitaSpan.textContent = `${perCapKg.toFixed(2)} kgCO₂/person`;
+            } else {
+                analyticsPerCapitaSpan.textContent = '—';
+            }
+        }
+        if (analyticsPerSqmSpan) {
+            if (builtupAreaVal > 0) {
+                const perSqmKg = netFootprint / builtupAreaVal;
+                analyticsPerSqmSpan.textContent = `${perSqmKg.toFixed(2)} kgCO₂/m²`;
+            } else {
+                analyticsPerSqmSpan.textContent = '—';
             }
         }
 
@@ -1844,5 +1889,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             sectionElements.forEach(sec => observer.observe(sec));
         }
+
+        // Initialize calculations and analytics counters immediately on load
+        calculateSummary();
     }
 });

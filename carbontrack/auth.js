@@ -602,45 +602,30 @@
             // 2. Also try inserting to Supabase table `emissions_submissions`
             if (this.supabase) {
                 try {
-                    // Try with user_id first
-                    const { error: dbErr } = await this.supabase
-                        .from('emissions_submissions')
-                        .insert([{
-                            organization_name: assessmentData.organization_name,
-                            address: assessmentData.address,
-                            contact_number: assessmentData.contact_number,
-                            email: record.user_email,
-                            student_count: assessmentData.student_count || 0,
-                            paper_emissions_kg: assessmentData.paper_emissions_kg || 0,
-                            lpg_emissions_kg: assessmentData.lpg_emissions_kg || 0,
-                            electricity_emissions_kg: assessmentData.electricity_emissions_kg || 0,
-                            generator_emissions_kg: assessmentData.generator_emissions_kg || 0,
-                            vehicle_emissions_kg: assessmentData.vehicle_emissions_kg || 0,
-                            solar_offset_kg: assessmentData.solar_offset_kg || 0,
-                            tree_sink_kg: assessmentData.tree_sink_kg || 0,
-                            net_footprint_kg: assessmentData.net_footprint_kg || 0,
-                            user_id: user?.id || null
-                        }]);
+                    const rowData = {
+                        organization_name: assessmentData.organization_name || 'Not provided',
+                        address: assessmentData.address || 'Not provided',
+                        contact_number: assessmentData.contact_number || 'Not provided',
+                        email: record.user_email || 'anonymous',
+                        student_count: assessmentData.student_count || 0,
+                        paper_emissions_kg: assessmentData.paper_emissions_kg || 0,
+                        lpg_emissions_kg: assessmentData.lpg_emissions_kg || 0,
+                        electricity_emissions_kg: assessmentData.electricity_emissions_kg || 0,
+                        generator_emissions_kg: assessmentData.generator_emissions_kg || 0,
+                        vehicle_emissions_kg: assessmentData.vehicle_emissions_kg || 0,
+                        solar_offset_kg: assessmentData.solar_offset_kg || 0,
+                        tree_sink_kg: assessmentData.tree_sink_kg || 0,
+                        net_footprint_kg: assessmentData.net_footprint_kg || 0
+                    };
 
-                    if (dbErr && /column "user_id" of relation/i.test(dbErr.message)) {
-                        // Fallback without user_id if table schema doesn't have that column
-                        await this.supabase
-                            .from('emissions_submissions')
-                            .insert([{
-                                organization_name: assessmentData.organization_name,
-                                address: assessmentData.address,
-                                contact_number: assessmentData.contact_number,
-                                email: record.user_email,
-                                student_count: assessmentData.student_count || 0,
-                                paper_emissions_kg: assessmentData.paper_emissions_kg || 0,
-                                lpg_emissions_kg: assessmentData.lpg_emissions_kg || 0,
-                                electricity_emissions_kg: assessmentData.electricity_emissions_kg || 0,
-                                generator_emissions_kg: assessmentData.generator_emissions_kg || 0,
-                                vehicle_emissions_kg: assessmentData.vehicle_emissions_kg || 0,
-                                solar_offset_kg: assessmentData.solar_offset_kg || 0,
-                                tree_sink_kg: assessmentData.tree_sink_kg || 0,
-                                net_footprint_kg: assessmentData.net_footprint_kg || 0
-                            }]);
+                    const { data: dbData, error: dbErr } = await this.supabase
+                        .from('emissions_submissions')
+                        .insert([rowData]);
+
+                    if (dbErr) {
+                        console.error('Supabase DB insert error:', dbErr);
+                    } else {
+                        console.log('Successfully saved assessment to Supabase emissions_submissions:', dbData);
                     }
                 } catch (e) {
                     console.warn('Supabase DB insert note:', e);
