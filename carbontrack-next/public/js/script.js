@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CarbonTrack Interactive Script
+   Code2Carbon Interactive Script
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
         googleLoginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             // Simulate Google OAuth
-            showModal('Google Login Connected', 'Successfully authenticated via Google services. Welcome to CarbonTrack!');
+            showModal('Google Login Connected', 'Successfully authenticated via Google services. Welcome to Code2Carbon!');
         });
     }
 

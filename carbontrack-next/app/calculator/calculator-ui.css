@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CarbonTrack – Calculator Page UI  (v2: SaaS dashboard polish)
+   Code2Carbon – Calculator Page UI  (v2: SaaS dashboard polish)
    Every rule is scoped under .calc-page, so nothing here affects the homepage.
    Layout: one column of section cards; each table row becomes a labelled
    entry card (fields in a responsive grid). No markup hooks used by

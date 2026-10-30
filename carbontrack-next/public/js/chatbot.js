@@ -1,12 +1,12 @@
 /**
- * CarbonTrack - EcoBot Assistant (Hardcoded Q&A Edition)
+ * Code2Carbon - EcoBot Assistant (Hardcoded Q&A Edition)
  * Simple, offline AI assistant answering 6 core carbon footprint & sustainability questions.
  */
 
 (function () {
     'use strict';
 
-    const STORAGE_KEY_MESSAGES = 'carbontrack_ecobot_hardcoded_v1';
+    const STORAGE_KEY_MESSAGES = 'code2carbon_ecobot_hardcoded_v1';
 
     let messages = [];
     let isOpen = false;
@@ -33,7 +33,7 @@
             keywords: ['electricity', 'power', 'grid', 'kwh', 'energy', 'calculate electricity'],
             question: 'How is the electricity carbon footprint calculated?',
             answer: `<strong>Electricity Carbon Calculation Formula:</strong><br><br>
-In CarbonTrack, purchased grid electricity is calculated using national grid emission factors:
+In Code2Carbon, purchased grid electricity is calculated using national grid emission factors:
 <br><br>
 <code>Emissions (kg CO₂) = Electricity Usage (kWh) × 0.82 kg CO₂/kWh</code>
 <br><br>
@@ -68,9 +68,9 @@ Generating clean solar power directly replaces fossil-fuel grid electricity:
             id: 'standards-iso',
             chipLabel: '📊 ISO 14064 & GHG Protocol',
             keywords: ['iso', 'iso 14064', 'ghg protocol', 'standard', 'methodology', 'compliance'],
-            question: 'What standards does CarbonTrack use?',
+            question: 'What standards does Code2Carbon use?',
             answer: `<strong>International Standards & Methodologies:</strong><br><br>
-CarbonTrack aligns strictly with global sustainability standards:
+Code2Carbon aligns strictly with global sustainability standards:
 <ol>
   <li><strong>GHG Protocol Corporate Standard:</strong> The world's most recognized accounting standard for greenhouse gas emissions.</li>
   <li><strong>ISO 14064-1:</strong> Principles and specifications at the organization level for quantification and reporting of GHG emissions.</li>
@@ -139,7 +139,7 @@ CarbonTrack aligns strictly with global sustainability standards:
                     </div>
                     <div class="ecobot-header-text">
                         <h3>EcoBot Assistant</h3>
-                        <p>CarbonTrack Knowledge Base</p>
+                        <p>Code2Carbon Knowledge Base</p>
                     </div>
                 </div>
                 <div class="ecobot-header-actions">
@@ -161,7 +161,7 @@ CarbonTrack aligns strictly with global sustainability standards:
             <div class="ecobot-body" id="ecobot-body">
                 <div class="ecobot-welcome-card" id="ecobot-welcome">
                     <h4>🌱 Welcome to EcoBot Assistant</h4>
-                    <p>Click any topic below or type a question to get instant verified answers from our CarbonTrack Sustainability Knowledge Base:</p>
+                    <p>Click any topic below or type a question to get instant verified answers from our Code2Carbon Sustainability Knowledge Base:</p>
                     <div class="ecobot-chips-label">Select a Question</div>
                     <div class="ecobot-chips">
                         ${chipsHtml}
@@ -181,7 +181,7 @@ CarbonTrack aligns strictly with global sustainability standards:
                         </svg>
                     </button>
                 </form>
-                <div class="ecobot-footer-note">CarbonTrack Verified Knowledge Base</div>
+                <div class="ecobot-footer-note">Code2Carbon Verified Knowledge Base</div>
             </div>
         `;
         document.body.appendChild(drawer);

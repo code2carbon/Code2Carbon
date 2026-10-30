@@ -3,6 +3,8 @@
 import { useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import './home-ui.css';
+// import './home-sections.css';
+
 
 /* ==========================================================================
    Shared building blocks
@@ -43,7 +45,7 @@ const BrandContent = ({ detailed = false }: { detailed?: boolean }) => (
       {detailed && <path d="M19 2c-2.26 4.33-5.27 7.14-8 10" />}
     </Icon>
     <span>
-      Carbon<span>Track</span>
+      Code<span>2Carbon</span>
     </span>
   </>
 );
@@ -239,9 +241,9 @@ const TIMELINE_STEPS: { title: string; desc: string; icon: ReactNode }[] = [
     desc: 'Our processing layer maps inputs against localized carbon coefficients (e.g., eGRID regional grid emissions, EPA transport fuel density tables).',
     icon: (
       <>
-        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-        <line x1="9" y1="9" x2="15" y2="15"></line>
-        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <rect x="4" y="3" width="16" height="18" rx="2.5"></rect>
+        <rect x="7" y="6" width="10" height="4" rx="1"></rect>
+        <path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01M16 17.5h.01"></path>
       </>
     ),
   },
@@ -384,7 +386,7 @@ const FOOTER_LINKS = [
 
 const FOOTER_CONTACT: { text: string; icon: ReactNode }[] = [
   {
-    text: 'research@carbontrack.org',
+    text: 'research@code2carbon.org',
     icon: (
       <>
         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -653,7 +655,7 @@ const Hero = () => (
           <span className="highlight-text">Reduce Carbon Emissions</span>
         </h1>
         <p className="hero-subtitle">
-          CarbonTrack helps educational institutions measure, analyze, and report Scope 1, 2, and 3 greenhouse gas
+          Code2Carbon helps educational institutions measure, analyze, and report Scope 1, 2, and 3 greenhouse gas
           emissions using internationally recognized methodologies. Build carbon inventories, unlock actionable
           insights, and progress toward net-zero goals from a single platform.
         </p>
@@ -717,23 +719,91 @@ const Standards = () => (
 
 /* ---------- About ---------- */
 
+/* Decorative artwork: static, hand-built SVG markup kept as strings so the output
+   is identical on server and client (no hydration differences). Every id is
+   prefixed "ab-" so nothing collides with the hero illustration. */
+const AB_DEFS = "<svg width=\"0\" height=\"0\" style=\"position:absolute\" aria-hidden=\"true\">\n<defs>\n<linearGradient id=\"ab-lf\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#c4f3d8\"/><stop offset=\".55\" stop-color=\"#52c27d\"/><stop offset=\"1\" stop-color=\"#16894a\"/></linearGradient>\n<linearGradient id=\"ab-lf2\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3fbee\"/><stop offset=\"1\" stop-color=\"#8ddfae\"/></linearGradient>\n<filter id=\"ab-sh\" x=\"-20%\" y=\"-20%\" width=\"150%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"6\" stdDeviation=\"6\" flood-color=\"#064e3b\" flood-opacity=\".22\"/></filter>\n<symbol id=\"ab-leaf\" viewBox=\"0 0 40 60\"><path d=\"M20 2C39 17 41 43 20 58C-1 43 1 17 20 2Z\" fill=\"url(#ab-lf)\"/><path d=\"M20 10V54M20 26L10 18M20 36L9 29M20 26L30 18M20 36L31 29\" stroke=\"#fff\" stroke-opacity=\".5\" stroke-width=\"1.2\" fill=\"none\"/></symbol>\n<symbol id=\"ab-leafl\" viewBox=\"0 0 40 60\"><path d=\"M20 2C39 17 41 43 20 58C-1 43 1 17 20 2Z\" fill=\"url(#ab-lf2)\"/><path d=\"M20 10V54\" stroke=\"#fff\" stroke-opacity=\".7\" stroke-width=\"1.2\"/></symbol>\n<symbol id=\"ab-tree\" viewBox=\"0 0 40 52\"><rect x=\"18\" y=\"30\" width=\"4\" height=\"20\" rx=\"2\" fill=\"#7a4a24\"/><circle cx=\"20\" cy=\"18\" r=\"14\" fill=\"#1c8f52\"/><circle cx=\"11\" cy=\"26\" r=\"10\" fill=\"#27a862\"/><circle cx=\"29\" cy=\"26\" r=\"10\" fill=\"#157a45\"/><circle cx=\"22\" cy=\"12\" r=\"8\" fill=\"#4cc283\" fill-opacity=\".8\"/></symbol>\n<symbol id=\"ab-pine\" viewBox=\"0 0 30 50\"><rect x=\"13\" y=\"38\" width=\"4\" height=\"12\" fill=\"#7a4a24\"/><path d=\"M15 2L27 22H3ZM15 14L29 36H1Z\" fill=\"#157a45\"/></symbol>\n<symbol id=\"ab-cloud\" viewBox=\"0 0 80 36\"><path d=\"M12 32C2 32 0 20 10 18C10 8 24 4 30 12C36 2 54 6 54 18C66 16 74 30 62 32Z\" fill=\"#fff\"/></symbol>\n<symbol id=\"ab-spark\" viewBox=\"0 0 20 20\"><path d=\"M10 0C11 6 14 9 20 10C14 11 11 14 10 20C9 14 6 11 0 10C6 9 9 6 10 0Z\" fill=\"#fff\"/></symbol>\n<symbol id=\"ab-mark\" viewBox=\"0 0 40 40\"><path d=\"M10 34C3 20 10 7 29 4C33 19 27 31 14 32\" fill=\"none\" stroke=\"#0b7a55\" stroke-width=\"3.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 37C16 25 20 17 28 9\" fill=\"none\" stroke=\"#0b7a55\" stroke-width=\"3.4\" stroke-linecap=\"round\"/></symbol>\n<pattern id=\"ab-win\" width=\"9\" height=\"11\" patternUnits=\"userSpaceOnUse\"><rect x=\"2\" y=\"3\" width=\"5\" height=\"5\" rx=\"1\" fill=\"#fff\" fill-opacity=\".75\"/></pattern>\n<pattern id=\"ab-win2\" width=\"11\" height=\"11\" patternUnits=\"userSpaceOnUse\"><rect x=\"1.5\" y=\"2\" width=\"8\" height=\"7\" fill=\"#5b9ed1\" fill-opacity=\".75\"/></pattern>\n</defs>\n</svg>";
+const AB_BG = "<svg viewBox=\"0 0 1600 1000\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\">\n<use href=\"#ab-leafl\" x=\"-50\" y=\"520\" width=\"150\" height=\"225\" transform=\"rotate(-40 25 630)\" opacity=\".7\"/>\n<use href=\"#ab-leafl\" x=\"40\" y=\"720\" width=\"110\" height=\"165\" transform=\"rotate(25 95 800)\" opacity=\".6\"/>\n<use href=\"#ab-leafl\" x=\"1500\" y=\"640\" width=\"130\" height=\"195\" transform=\"rotate(45 1565 737)\" opacity=\".7\"/>\n<use href=\"#ab-leafl\" x=\"1380\" y=\"860\" width=\"90\" height=\"135\" transform=\"rotate(-30 1425 927)\" opacity=\".55\"/>\n<use href=\"#ab-cloud\" x=\"640\" y=\"40\" width=\"190\" height=\"86\" opacity=\".8\"/>\n<use href=\"#ab-cloud\" x=\"1080\" y=\"150\" width=\"140\" height=\"64\" opacity=\".7\"/>\n<use href=\"#ab-cloud\" x=\"330\" y=\"190\" width=\"120\" height=\"54\" opacity=\".7\"/>\n<use href=\"#ab-spark\" x=\"470\" y=\"130\" width=\"18\" height=\"18\" opacity=\".9\"/><use href=\"#ab-spark\" x=\"1180\" y=\"90\" width=\"22\" height=\"22\"/><use href=\"#ab-spark\" x=\"900\" y=\"250\" width=\"14\" height=\"14\"/><use href=\"#ab-spark\" x=\"250\" y=\"520\" width=\"16\" height=\"16\"/><use href=\"#ab-spark\" x=\"1340\" y=\"560\" width=\"20\" height=\"20\"/>\n</svg>";
+const AB_GLOBE = "<svg viewBox=\"0 0 460 480\" aria-hidden=\"true\">\n    <defs>\n      <radialGradient id=\"ab-glow\" cx=\"50%\" cy=\"50%\" r=\"50%\"><stop offset=\".6\" stop-color=\"#d6f8e6\" stop-opacity=\".9\"/><stop offset=\"1\" stop-color=\"#d6f8e6\" stop-opacity=\"0\"/></radialGradient>\n      <radialGradient id=\"ab-gg\" cx=\"32%\" cy=\"26%\" r=\"90%\"><stop offset=\"0\" stop-color=\"#8ae6ab\"/><stop offset=\".5\" stop-color=\"#2eb068\"/><stop offset=\"1\" stop-color=\"#0b6f49\"/></radialGradient>\n      <radialGradient id=\"ab-rim\" cx=\"50%\" cy=\"50%\" r=\"50%\"><stop offset=\".78\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#e9fff3\" stop-opacity=\".85\"/></radialGradient>\n      <clipPath id=\"ab-gc\"><circle cx=\"230\" cy=\"225\" r=\"152\"/></clipPath>\n    </defs>\n    <circle cx=\"230\" cy=\"225\" r=\"225\" fill=\"url(#ab-glow)\"/>\n    <circle cx=\"230\" cy=\"225\" r=\"205\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" opacity=\".9\"/>\n    <circle cx=\"230\" cy=\"225\" r=\"184\" fill=\"none\" stroke=\"#7fdcab\" stroke-width=\"1.5\" stroke-dasharray=\"3 8\" opacity=\".8\"/>\n    <circle cx=\"230\" cy=\"225\" r=\"152\" fill=\"url(#ab-gg)\"/>\n    <g clip-path=\"url(#ab-gc)\">\n      <path d=\"M118 150C134 116 186 108 214 132C238 152 214 176 192 188C180 212 200 240 178 266C156 286 138 256 130 230C124 208 108 178 118 150Z\" fill=\"#a8eac5\"/>\n      <path d=\"M122 156C138 124 184 118 208 138C196 134 150 134 130 170Z\" fill=\"#d4f8e4\" opacity=\".7\"/>\n      <path d=\"M252 132C290 112 332 140 326 174C320 202 290 204 280 230C270 252 246 242 248 216C250 192 236 184 242 160Z\" fill=\"#a8eac5\"/>\n      <path d=\"M262 286C292 274 322 288 314 312C306 332 278 330 266 316Z\" fill=\"#8fe0b3\"/>\n      <path d=\"M300 240C316 236 332 248 322 262C312 270 298 262 300 240Z\" fill=\"#8fe0b3\" opacity=\".8\"/>\n      <path d=\"M130 230C150 250 170 262 190 270\" stroke=\"#e9fff3\" stroke-width=\"2\" fill=\"none\" opacity=\".5\"/>\n      <ellipse cx=\"190\" cy=\"140\" rx=\"46\" ry=\"10\" fill=\"#fff\" opacity=\".28\" transform=\"rotate(-28 190 140)\"/>\n      <ellipse cx=\"300\" cy=\"300\" rx=\"50\" ry=\"9\" fill=\"#fff\" opacity=\".22\" transform=\"rotate(-18 300 300)\"/>\n    </g>\n    <circle cx=\"230\" cy=\"225\" r=\"152\" fill=\"url(#ab-rim)\"/>\n    <ellipse cx=\"170\" cy=\"150\" rx=\"40\" ry=\"62\" fill=\"#fff\" opacity=\".12\" transform=\"rotate(30 170 150)\"/>\n    <g class=\"ab-fl\"><use href=\"#ab-leaf\" x=\"34\" y=\"255\" width=\"120\" height=\"180\" transform=\"rotate(-48 94 345)\"/></g>\n    <use href=\"#ab-leaf\" x=\"78\" y=\"330\" width=\"100\" height=\"150\" transform=\"rotate(12 128 405)\"/>\n    <use href=\"#ab-leaf\" x=\"150\" y=\"382\" width=\"64\" height=\"96\" transform=\"rotate(52 182 430)\"/>\n    <use href=\"#ab-leaf\" x=\"-6\" y=\"330\" width=\"80\" height=\"120\" transform=\"rotate(-80 34 390)\"/>\n    <use href=\"#ab-leafl\" x=\"22\" y=\"388\" width=\"60\" height=\"90\" transform=\"rotate(-20 52 433)\"/>\n    <g class=\"ab-fl\"><use href=\"#ab-leaf\" x=\"352\" y=\"276\" width=\"56\" height=\"84\" transform=\"rotate(48 380 318)\"/></g>\n    <use href=\"#ab-leaf\" x=\"318\" y=\"334\" width=\"44\" height=\"66\" transform=\"rotate(-30 340 367)\"/>\n    <use href=\"#ab-leaf\" x=\"262\" y=\"14\" width=\"46\" height=\"70\" transform=\"rotate(28 285 49)\"/>\n    <use href=\"#ab-leaf\" x=\"46\" y=\"86\" width=\"38\" height=\"58\" transform=\"rotate(-24 65 115)\"/>\n    <use href=\"#ab-spark\" x=\"320\" y=\"120\" width=\"16\" height=\"16\"/><use href=\"#ab-spark\" x=\"70\" y=\"230\" width=\"12\" height=\"12\"/><use href=\"#ab-spark\" x=\"400\" y=\"210\" width=\"14\" height=\"14\"/>\n    <circle cx=\"410\" cy=\"160\" r=\"4\" fill=\"#7fdcab\"/><circle cx=\"36\" cy=\"200\" r=\"3\" fill=\"#7fdcab\"/>\n  </svg>";
+const AB_CITY = "<svg viewBox=\"0 0 560 380\" aria-hidden=\"true\">\n      <defs>\n        <linearGradient id=\"ab-bd\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9f8f0\"/><stop offset=\"1\" stop-color=\"#4fbfa6\"/></linearGradient>\n        <linearGradient id=\"ab-bd2\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e6f6fb\"/><stop offset=\"1\" stop-color=\"#6fbfd4\"/></linearGradient>\n        <linearGradient id=\"ab-h0\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#cdf6df\"/><stop offset=\"1\" stop-color=\"#9be6bd\"/></linearGradient>\n        <linearGradient id=\"ab-h1\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#8fe3b2\"/><stop offset=\"1\" stop-color=\"#3eb671\"/></linearGradient>\n        <linearGradient id=\"ab-h2\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#47bf78\"/><stop offset=\"1\" stop-color=\"#1b8d53\"/></linearGradient>\n      </defs>\n      <path d=\"M0 230C90 190 200 210 290 190C380 172 470 150 560 168V380H0Z\" fill=\"url(#ab-h0)\" opacity=\".9\"/>\n      <g>\n        <rect x=\"362\" y=\"86\" width=\"38\" height=\"128\" rx=\"3\" fill=\"url(#ab-bd2)\"/><rect x=\"362\" y=\"86\" width=\"38\" height=\"128\" fill=\"url(#ab-win)\"/>\n        <rect x=\"404\" y=\"34\" width=\"46\" height=\"180\" rx=\"3\" fill=\"url(#ab-bd)\"/><rect x=\"404\" y=\"34\" width=\"46\" height=\"180\" fill=\"url(#ab-win)\"/><rect x=\"418\" y=\"24\" width=\"18\" height=\"12\" fill=\"#7bd1be\"/><rect x=\"426\" y=\"12\" width=\"2\" height=\"14\" fill=\"#6aa\"/>\n        <rect x=\"454\" y=\"62\" width=\"40\" height=\"152\" rx=\"3\" fill=\"url(#ab-bd2)\"/><rect x=\"454\" y=\"62\" width=\"40\" height=\"152\" fill=\"url(#ab-win)\"/>\n        <rect x=\"498\" y=\"94\" width=\"40\" height=\"120\" rx=\"3\" fill=\"url(#ab-bd)\"/><rect x=\"498\" y=\"94\" width=\"40\" height=\"120\" fill=\"url(#ab-win)\"/>\n        <rect x=\"330\" y=\"124\" width=\"28\" height=\"90\" rx=\"3\" fill=\"url(#ab-bd)\"/><rect x=\"330\" y=\"124\" width=\"28\" height=\"90\" fill=\"url(#ab-win)\"/>\n      </g>\n      <g stroke=\"#cfe3e0\" stroke-width=\"1\" fill=\"#fff\">\n        <g><path d=\"M232 222L237 222L240 130L229 130Z\"/><circle cx=\"234.5\" cy=\"126\" r=\"6\" fill=\"#e8eef0\"/><g class=\"ab-bl\" style=\"transform-origin:234px 126px\"><path d=\"M234 126L229 62L239 62ZM234 126L292 156L288 165ZM234 126L178 158L182 167Z\"/></g></g>\n        <g><path d=\"M300 214L304 214L306 156L298 156Z\"/><circle cx=\"302\" cy=\"153\" r=\"5\" fill=\"#e8eef0\"/><g class=\"ab-bl s\" style=\"transform-origin:302px 153px\"><path d=\"M302 153L298 106L306 106ZM302 153L346 174L343 181ZM302 153L258 176L261 183Z\"/></g></g>\n        <g><path d=\"M170 238L173 238L175 190L168 190Z\"/><circle cx=\"171.5\" cy=\"188\" r=\"4\" fill=\"#e8eef0\"/><g class=\"ab-bl f\" style=\"transform-origin:171px 188px\"><path d=\"M171 188L168 150L174 150ZM171 188L204 204L202 210ZM171 188L138 206L140 212Z\"/></g></g>\n      </g>\n      <path d=\"M0 290C70 236 170 258 260 242C350 226 440 204 560 226V380H0Z\" fill=\"url(#ab-h1)\"/>\n      <path d=\"M96 380C170 322 232 336 320 300C384 274 460 268 560 280\" fill=\"none\" stroke=\"#fff\" stroke-width=\"26\" stroke-linecap=\"round\" opacity=\".95\"/>\n      <path d=\"M96 380C170 322 232 336 320 300C384 274 460 268 560 280\" fill=\"none\" stroke=\"#cfeadc\" stroke-width=\"2\" stroke-dasharray=\"10 12\" opacity=\".9\"/>\n      <path d=\"M0 340C100 296 190 330 290 306C380 284 470 292 560 306V380H0Z\" fill=\"url(#ab-h2)\"/>\n      <use href=\"#ab-tree\" x=\"30\" y=\"236\" width=\"44\" height=\"58\"/><use href=\"#ab-pine\" x=\"74\" y=\"254\" width=\"26\" height=\"42\"/><use href=\"#ab-tree\" x=\"108\" y=\"262\" width=\"34\" height=\"44\"/>\n      <use href=\"#ab-tree\" x=\"318\" y=\"206\" width=\"38\" height=\"50\"/><use href=\"#ab-pine\" x=\"352\" y=\"222\" width=\"22\" height=\"36\"/><use href=\"#ab-tree\" x=\"480\" y=\"190\" width=\"46\" height=\"60\"/><use href=\"#ab-pine\" x=\"524\" y=\"206\" width=\"26\" height=\"42\"/>\n      <use href=\"#ab-tree\" x=\"196\" y=\"278\" width=\"40\" height=\"52\"/><use href=\"#ab-tree\" x=\"434\" y=\"262\" width=\"34\" height=\"46\"/>\n      <use href=\"#ab-tree\" x=\"470\" y=\"300\" width=\"50\" height=\"64\"/><use href=\"#ab-pine\" x=\"20\" y=\"316\" width=\"30\" height=\"48\"/><use href=\"#ab-tree\" x=\"226\" y=\"322\" width=\"36\" height=\"46\"/>\n      <use href=\"#ab-leaf\" x=\"466\" y=\"290\" width=\"70\" height=\"105\" transform=\"rotate(64 501 342)\"/>\n      <use href=\"#ab-leaf\" x=\"510\" y=\"318\" width=\"50\" height=\"75\" transform=\"rotate(30 535 355)\"/>\n      <use href=\"#ab-leafl\" x=\"372\" y=\"20\" width=\"36\" height=\"54\" transform=\"rotate(40 390 47)\" class=\"ab-fl\"/>\n      <use href=\"#ab-cloud\" x=\"250\" y=\"30\" width=\"90\" height=\"40\" opacity=\".9\"/><use href=\"#ab-spark\" x=\"318\" y=\"96\" width=\"14\" height=\"14\"/>\n    </svg>";
+const AB_BADGE = "<svg viewBox=\"0 0 48 48\"><circle cx=\"24\" cy=\"18\" r=\"13\" fill=\"#17a263\"/><circle cx=\"14\" cy=\"26\" r=\"10\" fill=\"#17a263\"/><circle cx=\"33\" cy=\"27\" r=\"10\" fill=\"#139054\"/><rect x=\"21\" y=\"30\" width=\"4\" height=\"12\" fill=\"#139054\"/><text x=\"24\" y=\"26\" font-family=\"Poppins,sans-serif\" font-size=\"11\" font-weight=\"700\" fill=\"#fff\" text-anchor=\"middle\">CO₂</text><path d=\"M24 44v-5m-3 2 3 3 3-3\" stroke=\"#fff\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/></svg>";
+const AB_ART: Record<string, string> = {
+  green: "<svg viewBox=\"0 0 440 200\" preserveAspectRatio=\"xMidYMax slice\" aria-hidden=\"true\">\n      <defs><linearGradient id=\"ab-a1\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d4f6e3\"/><stop offset=\"1\" stop-color=\"#7ad6a2\"/></linearGradient><linearGradient id=\"ab-a1b\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#86dcae\"/><stop offset=\"1\" stop-color=\"#33a866\"/></linearGradient></defs>\n      <path d=\"M0 200V90C60 56 130 80 200 66C280 50 360 36 440 54V200Z\" fill=\"url(#ab-a1)\"/>\n      <use href=\"#ab-pine\" x=\"396\" y=\"40\" width=\"26\" height=\"44\"/><use href=\"#ab-pine\" x=\"418\" y=\"48\" width=\"22\" height=\"38\"/>\n      <g filter=\"url(#ab-sh)\">\n        <rect x=\"150\" y=\"96\" width=\"196\" height=\"62\" fill=\"#eef5fa\"/><rect x=\"150\" y=\"96\" width=\"196\" height=\"62\" fill=\"url(#ab-win2)\"/>\n        <rect x=\"200\" y=\"62\" width=\"86\" height=\"42\" fill=\"#e4eef6\"/><rect x=\"200\" y=\"62\" width=\"86\" height=\"42\" fill=\"url(#ab-win2)\"/>\n        <rect x=\"292\" y=\"40\" width=\"38\" height=\"66\" fill=\"#4f93c9\"/><rect x=\"292\" y=\"40\" width=\"38\" height=\"66\" fill=\"url(#ab-win2)\"/><rect x=\"288\" y=\"36\" width=\"46\" height=\"5\" fill=\"#2f6aa0\"/>\n        <rect x=\"116\" y=\"112\" width=\"40\" height=\"46\" fill=\"#e4eef6\"/><rect x=\"116\" y=\"112\" width=\"40\" height=\"46\" fill=\"url(#ab-win2)\"/>\n        <rect x=\"196\" y=\"58\" width=\"94\" height=\"6\" fill=\"#35709f\"/><rect x=\"146\" y=\"92\" width=\"204\" height=\"6\" fill=\"#35709f\"/>\n        <g fill=\"#fff\"><rect x=\"214\" y=\"124\" width=\"5\" height=\"34\"/><rect x=\"238\" y=\"124\" width=\"5\" height=\"34\"/><rect x=\"262\" y=\"124\" width=\"5\" height=\"34\"/></g>\n      </g>\n      <path d=\"M0 200C90 168 170 184 250 166C330 148 390 166 440 156V200Z\" fill=\"url(#ab-a1b)\"/>\n      <path d=\"M150 200C190 176 240 174 300 164\" stroke=\"#fff\" stroke-width=\"12\" fill=\"none\" stroke-linecap=\"round\" opacity=\".85\"/>\n      <use href=\"#ab-tree\" x=\"96\" y=\"104\" width=\"44\" height=\"58\"/><use href=\"#ab-tree\" x=\"60\" y=\"124\" width=\"36\" height=\"48\"/><use href=\"#ab-tree\" x=\"342\" y=\"100\" width=\"46\" height=\"60\"/><use href=\"#ab-tree\" x=\"376\" y=\"116\" width=\"40\" height=\"52\"/><use href=\"#ab-pine\" x=\"410\" y=\"108\" width=\"26\" height=\"44\"/><use href=\"#ab-tree\" x=\"20\" y=\"132\" width=\"34\" height=\"46\"/>\n      <ellipse cx=\"230\" cy=\"170\" rx=\"26\" ry=\"6\" fill=\"#2d9e5c\" opacity=\".5\"/>\n      <use href=\"#ab-leaf\" x=\"400\" y=\"150\" width=\"36\" height=\"54\" transform=\"rotate(50 418 177)\"/>\n    </svg>",
+  blue: "<svg viewBox=\"0 0 440 200\" preserveAspectRatio=\"xMidYMax slice\" aria-hidden=\"true\">\n      <defs><linearGradient id=\"ab-a2\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#9be8bc\"/><stop offset=\"1\" stop-color=\"#1f9a5a\"/></linearGradient><linearGradient id=\"ab-a2b\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d3f6e2\"/><stop offset=\"1\" stop-color=\"#6fd09b\"/></linearGradient></defs>\n      <path d=\"M0 200V70C80 40 150 90 220 100C300 112 360 50 440 64V200Z\" fill=\"url(#ab-a2b)\" opacity=\".8\"/>\n      <g filter=\"url(#ab-sh)\">\n        <g transform=\"rotate(-6 70 120)\"><rect x=\"40\" y=\"70\" width=\"98\" height=\"116\" rx=\"8\" fill=\"#f4f9fc\" stroke=\"#d3e5ee\"/></g>\n        <g transform=\"rotate(-11 110 130)\"><rect x=\"62\" y=\"56\" width=\"108\" height=\"126\" rx=\"8\" fill=\"#fff\" stroke=\"#d3e5ee\"/><rect x=\"74\" y=\"68\" width=\"40\" height=\"6\" rx=\"3\" fill=\"#cfe0e8\"/><text x=\"116\" y=\"136\" font-family=\"Poppins,sans-serif\" font-weight=\"800\" font-style=\"italic\" font-size=\"44\" fill=\"#16365c\" text-anchor=\"middle\">ISO</text><path d=\"M76 152h76M76 164h54\" stroke=\"#d3e5ee\" stroke-width=\"4\" stroke-linecap=\"round\"/></g>\n        <g><rect x=\"158\" y=\"46\" width=\"118\" height=\"128\" rx=\"8\" fill=\"#fff\" stroke=\"#d3e5ee\"/><circle cx=\"186\" cy=\"86\" r=\"14\" fill=\"none\" stroke=\"#0e9f8e\" stroke-width=\"8\"/><circle cx=\"186\" cy=\"86\" r=\"4\" fill=\"#16365c\"/><text x=\"208\" y=\"83\" font-family=\"Poppins,sans-serif\" font-weight=\"700\" font-size=\"16\" fill=\"#14304a\">GHG</text><text x=\"208\" y=\"99\" font-family=\"Poppins,sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#14304a\">Protocol</text><path d=\"M174 124h86M174 138h66M174 152h76\" stroke=\"#d3e5ee\" stroke-width=\"4\" stroke-linecap=\"round\"/></g>\n        <g transform=\"rotate(12 330 130)\"><rect x=\"272\" y=\"58\" width=\"112\" height=\"126\" rx=\"8\" fill=\"#fff\" stroke=\"#d3e5ee\"/><text x=\"328\" y=\"118\" font-family=\"Poppins,sans-serif\" font-weight=\"800\" font-style=\"italic\" font-size=\"34\" fill=\"#2b72c9\" text-anchor=\"middle\">ipcc</text><circle cx=\"328\" cy=\"150\" r=\"12\" fill=\"none\" stroke=\"#9cc4ea\" stroke-width=\"3\"/><path d=\"M316 150h24M328 138v24\" stroke=\"#9cc4ea\" stroke-width=\"2\"/></g>\n      </g>\n      <path d=\"M0 200V160C70 140 120 176 200 178C280 180 330 150 440 166V200Z\" fill=\"url(#ab-a2)\"/>\n      <use href=\"#ab-leaf\" x=\"-4\" y=\"110\" width=\"58\" height=\"87\" transform=\"rotate(-50 25 153)\"/><use href=\"#ab-leaf\" x=\"380\" y=\"92\" width=\"52\" height=\"78\" transform=\"rotate(34 406 131)\"/><use href=\"#ab-leaf\" x=\"408\" y=\"146\" width=\"40\" height=\"60\" transform=\"rotate(60 428 176)\"/>\n      <use href=\"#ab-spark\" x=\"148\" y=\"30\" width=\"14\" height=\"14\"/><use href=\"#ab-spark\" x=\"300\" y=\"34\" width=\"12\" height=\"12\"/>\n    </svg>",
+  emerald: "<svg viewBox=\"0 0 440 200\" preserveAspectRatio=\"xMidYMax slice\" aria-hidden=\"true\">\n      <defs><linearGradient id=\"ab-a3\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#b3efcd\"/><stop offset=\"1\" stop-color=\"#2aa866\"/></linearGradient><linearGradient id=\"ab-bar\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#34c27c\"/><stop offset=\"1\" stop-color=\"#0f9d58\"/></linearGradient></defs>\n      <path d=\"M0 200V90C80 62 150 112 230 104C310 96 370 60 440 74V200Z\" fill=\"url(#ab-a3)\" opacity=\".85\"/>\n      <g filter=\"url(#ab-sh)\">\n        <g transform=\"skewY(-5)\"><rect x=\"118\" y=\"78\" width=\"190\" height=\"112\" rx=\"9\" fill=\"#fff\" stroke=\"#d3e5ee\"/><rect x=\"118\" y=\"78\" width=\"190\" height=\"16\" rx=\"8\" fill=\"#eef5f9\"/><circle cx=\"130\" cy=\"86\" r=\"2.5\" fill=\"#f87171\"/><circle cx=\"139\" cy=\"86\" r=\"2.5\" fill=\"#fbbf24\"/><circle cx=\"148\" cy=\"86\" r=\"2.5\" fill=\"#34d399\"/>\n        <rect x=\"126\" y=\"102\" width=\"26\" height=\"80\" rx=\"4\" fill=\"#f1f7fa\"/><path d=\"M134 112h10M134 122h10M134 132h10\" stroke=\"#cfe0e8\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n        <path d=\"M168 176V150M184 176V136M200 176V154M216 176V122M232 176V138M248 176V112M264 176V128M280 176V104\" stroke=\"url(#ab-bar)\" stroke-width=\"10\" stroke-linecap=\"round\"/>\n        <path d=\"M166 142L186 128L204 140L222 110L240 124L258 98L284 94\" stroke=\"#0e9f8e\" stroke-width=\"2.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"258\" cy=\"98\" r=\"3.5\" fill=\"#0e9f8e\"/></g>\n        <g transform=\"skewY(-5)\"><rect x=\"296\" y=\"58\" width=\"96\" height=\"116\" rx=\"9\" fill=\"#fff\" stroke=\"#d3e5ee\"/><circle cx=\"344\" cy=\"104\" r=\"26\" fill=\"none\" stroke=\"#e4eef3\" stroke-width=\"13\"/><circle cx=\"344\" cy=\"104\" r=\"26\" fill=\"none\" stroke=\"#12a392\" stroke-width=\"13\" stroke-dasharray=\"100 80\" transform=\"rotate(-90 344 104)\"/><circle cx=\"344\" cy=\"104\" r=\"26\" fill=\"none\" stroke=\"#16a34a\" stroke-width=\"13\" stroke-dasharray=\"40 124\" stroke-dashoffset=\"-104\" transform=\"rotate(-90 344 104)\"/>\n        <circle cx=\"310\" cy=\"150\" r=\"3.5\" fill=\"#12a392\"/><path d=\"M318 150h28\" stroke=\"#cfe0e8\" stroke-width=\"4\" stroke-linecap=\"round\"/><circle cx=\"310\" cy=\"162\" r=\"3.5\" fill=\"#16a34a\"/><path d=\"M318 162h20\" stroke=\"#cfe0e8\" stroke-width=\"4\" stroke-linecap=\"round\"/></g>\n        <g transform=\"rotate(9 400 150)\"><rect x=\"380\" y=\"112\" width=\"48\" height=\"64\" rx=\"5\" fill=\"#fff\" stroke=\"#d3e5ee\"/><path d=\"M388 128h32M388 138h32M388 148h32M388 158h20\" stroke=\"#cfe0e8\" stroke-width=\"3\" stroke-linecap=\"round\"/></g>\n      </g>\n      <path d=\"M0 200V164C80 148 150 182 230 180C310 178 370 156 440 170V200Z\" fill=\"url(#ab-a2)\" opacity=\".95\"/>\n      <use href=\"#ab-leaf\" x=\"76\" y=\"100\" width=\"44\" height=\"66\" transform=\"rotate(-14 98 133)\"/><use href=\"#ab-leaf\" x=\"46\" y=\"126\" width=\"36\" height=\"54\" transform=\"rotate(-48 64 153)\"/><use href=\"#ab-leaf\" x=\"404\" y=\"66\" width=\"32\" height=\"48\" transform=\"rotate(42 420 90)\"/>\n      <use href=\"#ab-spark\" x=\"330\" y=\"30\" width=\"13\" height=\"13\"/>\n    </svg>",
+};
+
+const AboutArt = ({ html, className, as: Tag = 'div' }: { html: string; className: string; as?: 'div' | 'i' }) => (
+  <Tag className={className} aria-hidden="true" dangerouslySetInnerHTML={{ __html: html }} />
+);
+
+const AB_CHIPS: Record<string, ReactNode> = {
+  green: (
+    <>
+      <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+      <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+    </>
+  ),
+  emerald: (
+    <>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+    </>
+  ),
+};
+
 const About = () => (
   <section className="about-section" id="about">
+    <AboutArt html={AB_DEFS} className="ab-defs" />
+    <AboutArt html={AB_BG} className="ab-bgdeco" />
+
+    <div className="ab-hero">
+      <AboutArt html={AB_GLOBE} className="ab-hl" />
+
+      <div className="section-header text-center ab-hc">
+        <span className="section-label">Understanding Emissions</span>
+        <h2 className="section-title">
+          Why <span className="ab-accent">Code2Carbon?</span>
+        </h2>
+        <div className="title-bar"></div>
+        <p className="section-desc">
+          Code2Carbon enables educational institutions to measure, analyze, and report greenhouse gas emissions in
+          accordance with internationally recognized standards. By converting activity data into CO₂e emissions and
+          categorizing them into Scope 1, Scope 2, and Scope 3, the platform helps organizations understand their
+          environmental impact and identify opportunities for emission reduction.
+        </p>
+      </div>
+
+      <div className="ab-hr" aria-hidden="true">
+        <div className="ab-badge">
+          <AboutArt html={AB_BADGE} className="ab-badge-ico" as="i" />
+          <div>
+            <em>Lower</em>
+            <em>Emissions</em>
+            <small>Bigger Impact</small>
+          </div>
+        </div>
+        <AboutArt html={AB_CITY} className="ab-city" />
+      </div>
+    </div>
+
     <div className="container">
-      <SectionHeader label="Understanding Emissions" title="Why CarbonTrack?">
-        CarbonTrack enables educational institutions to measure, analyze, and report greenhouse gas emissions in
-        accordance with internationally recognized standards. By converting activity data into CO₂e emissions and
-        categorizing them into Scope 1, Scope 2, and Scope 3, the platform helps organizations understand their
-        environmental impact and identify opportunities for emission reduction.
-      </SectionHeader>
-      <div className="grid grid-3">
+      <div className="grid grid-3 ab-cards">
         {ABOUT_CARDS.map((card) => (
-          <div className="card about-card scroll-reveal" key={card.title}>
+          <div className={`card about-card ab-card ab-card-${card.tone} scroll-reveal`} key={card.title}>
             <div className="card-icon-container">
               <Icon className={`card-icon ${card.tone}`}>{card.icon}</Icon>
             </div>
             <h3>{card.title}</h3>
             <p>{card.desc}</p>
+            <AboutArt html={AB_ART[card.tone]} className="ab-art" />
+            {AB_CHIPS[card.tone] && (
+              <span className="ab-chip" aria-hidden="true">
+                <Icon>{AB_CHIPS[card.tone]}</Icon>
+              </span>
+            )}
           </div>
         ))}
       </div>
@@ -825,10 +895,17 @@ const PlannerKpi = ({
 const Planner = () => (
   <section className="planner-section" id="planner">
     <div className="container">
-      <SectionHeader label="Decarbonization Pathway" title="Net-Zero Transition Hub">
-        Simulate your path to sustainability. Toggle specific green initiatives to see their direct CapEx cost,
-        payback time, and aggregate impact on your 10-year carbon emissions forecast.
-      </SectionHeader>
+      <div className="section-header text-center">
+        <span className="section-label">Decarbonization Pathway</span>
+        <h2 className="section-title">
+          Net-Zero <span className="pl-accent">Transition Hub</span>
+        </h2>
+        <div className="title-bar"></div>
+        <p className="section-desc">
+          Simulate your path to sustainability. Toggle specific green initiatives to see their direct CapEx cost,
+          payback time, and aggregate impact on your 10-year carbon emissions forecast.
+        </p>
+      </div>
 
       <div className="planner-wrapper">
         {/* Left: checklist of initiatives */}
@@ -926,10 +1003,17 @@ const TrendIcon = ({ direction }: { direction: 'up' | 'down' }) => (
 const Dashboard = () => (
   <section className="dashboard-section" id="dashboard">
     <div className="container">
-      <SectionHeader label="Live Dashboard" title="See your entire carbon inventory at a glance">
-        A preview of the CarbonTrack analytics dashboard — real-time KPIs, scope-wise breakdowns, and monthly
+      <div className="section-header text-center">
+        <span className="section-label">Live Dashboard</span>
+        <h2 className="section-title">
+          See your entire <span className="sec-accent">carbon inventory</span> at a glance
+        </h2>
+        <div className="title-bar"></div>
+        <p className="section-desc">
+        A preview of the Code2Carbon analytics dashboard — real-time KPIs, scope-wise breakdowns, and monthly
         emissions trends.
-      </SectionHeader>
+      </p>
+      </div>
 
       <div className="dashboard-frame scroll-reveal">
         <div className="dashboard-top">
@@ -1022,13 +1106,34 @@ const Dashboard = () => (
 
 /* ---------- Methodology ---------- */
 
+/* Decorative artwork for the Methodology section: static SVG markup kept as strings so the
+   output is identical on server and client. Every id is prefixed "mt-" to avoid collisions. */
+const MT_DEFS = "<svg width=\"0\" height=\"0\" style=\"position:absolute\" aria-hidden=\"true\">\n<defs>\n<linearGradient id=\"mt-lf\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#c4f3d8\"/><stop offset=\".55\" stop-color=\"#52c27d\"/><stop offset=\"1\" stop-color=\"#16894a\"/></linearGradient>\n<linearGradient id=\"mt-gd\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#34c98a\"/><stop offset=\"1\" stop-color=\"#0a7d63\"/></linearGradient>\n<linearGradient id=\"mt-gb\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#3ed08a\"/><stop offset=\"1\" stop-color=\"#0f9d58\"/></linearGradient>\n<radialGradient id=\"mt-bl\" cx=\"50%\" cy=\"50%\" r=\"50%\"><stop offset=\"0\" stop-color=\"#d9f6e8\"/><stop offset=\"1\" stop-color=\"#d9f6e8\" stop-opacity=\"0\"/></radialGradient>\n<filter id=\"mt-sh\" x=\"-20%\" y=\"-20%\" width=\"150%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"7\" stdDeviation=\"6\" flood-color=\"#064e3b\" flood-opacity=\".22\"/></filter>\n<symbol id=\"mt-leaf\" viewBox=\"0 0 40 60\"><path d=\"M20 2C39 17 41 43 20 58C-1 43 1 17 20 2Z\" fill=\"url(#mt-lf)\"/><path d=\"M20 10V54M20 26L10 18M20 36L9 29M20 26L30 18M20 36L31 29\" stroke=\"#fff\" stroke-opacity=\".5\" stroke-width=\"1.2\" fill=\"none\"/></symbol>\n<symbol id=\"mt-cloud\" viewBox=\"0 0 80 36\"><path d=\"M12 32C2 32 0 20 10 18C10 8 24 4 30 12C36 2 54 6 54 18C66 16 74 30 62 32Z\" fill=\"#fff\"/></symbol>\n<symbol id=\"mt-spark\" viewBox=\"0 0 20 20\"><path d=\"M10 0C11 6 14 9 20 10C14 11 11 14 10 20C9 14 6 11 0 10C6 9 9 6 10 0Z\" fill=\"#fff\"/></symbol>\n</defs>\n</svg>";
+const MT_BG = "<svg viewBox=\"0 0 1600 1100\" preserveAspectRatio=\"xMidYMin slice\" aria-hidden=\"true\">\n<g fill=\"none\" stroke=\"#7fdcab\" stroke-opacity=\".55\" stroke-width=\"2\"><circle cx=\"40\" cy=\"220\" r=\"150\"/><circle cx=\"40\" cy=\"220\" r=\"110\" stroke-dasharray=\"4 8\"/><circle cx=\"40\" cy=\"220\" r=\"70\"/></g>\n<use href=\"#mt-leaf\" x=\"60\" y=\"260\" width=\"64\" height=\"96\" transform=\"rotate(36 92 308)\" opacity=\".9\"/>\n<use href=\"#mt-leaf\" x=\"1340\" y=\"70\" width=\"60\" height=\"90\" transform=\"rotate(58 1370 115)\"/>\n<use href=\"#mt-leaf\" x=\"1500\" y=\"250\" width=\"40\" height=\"60\" transform=\"rotate(-30 1520 280)\" opacity=\".7\"/>\n<use href=\"#mt-cloud\" x=\"40\" y=\"100\" width=\"150\" height=\"68\" opacity=\".9\"/><use href=\"#mt-cloud\" x=\"1180\" y=\"180\" width=\"110\" height=\"50\" opacity=\".7\"/><use href=\"#mt-cloud\" x=\"1420\" y=\"40\" width=\"130\" height=\"58\" opacity=\".8\"/>\n<use href=\"#mt-spark\" x=\"300\" y=\"150\" width=\"18\" height=\"18\"/><use href=\"#mt-spark\" x=\"1230\" y=\"300\" width=\"14\" height=\"14\"/><use href=\"#mt-spark\" x=\"180\" y=\"470\" width=\"14\" height=\"14\"/><use href=\"#mt-spark\" x=\"1440\" y=\"560\" width=\"18\" height=\"18\"/>\n<g opacity=\".5\"><path d=\"M1380 380v130M1360 440h40\" stroke=\"#bfe9d6\" stroke-width=\"3\"/><rect x=\"1330\" y=\"330\" width=\"26\" height=\"90\" fill=\"#cbeedd\"/><rect x=\"1360\" y=\"300\" width=\"30\" height=\"120\" fill=\"#bfe9d6\"/><rect x=\"1394\" y=\"350\" width=\"24\" height=\"70\" fill=\"#cbeedd\"/></g>\n<path d=\"M0 1010C200 940 380 980 560 1000C760 1022 940 940 1140 970C1320 996 1460 960 1600 930V1100H0Z\" fill=\"#c9eddc\" opacity=\".8\"/>\n<path d=\"M0 1060C220 1000 420 1040 640 1040C860 1040 1040 990 1260 1020C1420 1040 1520 1010 1600 990V1100H0Z\" fill=\"#b5e6cf\" opacity=\".85\"/>\n<use href=\"#mt-leaf\" x=\"1200\" y=\"920\" width=\"70\" height=\"105\" transform=\"rotate(30 1235 972)\" opacity=\".7\"/><use href=\"#mt-leaf\" x=\"80\" y=\"940\" width=\"60\" height=\"90\" transform=\"rotate(-20 110 985)\" opacity=\".7\"/>\n</svg>";
+const MT_ART: string[] = [
+  "<svg viewBox=\"0 0 260 170\" aria-hidden=\"true\">\n          <ellipse cx=\"150\" cy=\"92\" rx=\"104\" ry=\"70\" fill=\"url(#mt-bl)\"/>\n          <g filter=\"url(#mt-sh)\"><rect x=\"96\" y=\"22\" width=\"112\" height=\"104\" rx=\"10\" fill=\"#e9f7f1\" transform=\"rotate(6 152 74)\"/><rect x=\"78\" y=\"16\" width=\"116\" height=\"112\" rx=\"10\" fill=\"#fff\" stroke=\"#d6ebe3\"/></g>\n          <rect x=\"78\" y=\"16\" width=\"116\" height=\"16\" rx=\"8\" fill=\"url(#mt-gd)\"/>\n          <path d=\"M94 112V92M112 112V78M130 112V86M148 112V62M166 112V72\" stroke=\"url(#mt-gb)\" stroke-width=\"11\" stroke-linecap=\"round\"/>\n          <path d=\"M96 78L114 66L132 74L150 50L170 58\" stroke=\"#0e9f8e\" stroke-width=\"2.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n          <path d=\"M92 40h50M92 50h34\" stroke=\"#d6ebe3\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n          <use href=\"#mt-leaf\" x=\"30\" y=\"86\" width=\"40\" height=\"60\" transform=\"rotate(-26 50 116)\"/><use href=\"#mt-leaf\" x=\"56\" y=\"104\" width=\"34\" height=\"52\" transform=\"rotate(18 73 130)\"/>\n          <g filter=\"url(#mt-sh)\"><path d=\"M172 150C158 150 156 132 170 129C170 114 192 112 198 124C206 114 228 120 226 136C240 136 242 152 228 152Z\" fill=\"url(#mt-gd)\"/></g>\n          <path d=\"M198 144V128M190 135l8-9 8 9\" stroke=\"#fff\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n          <use href=\"#mt-spark\" x=\"212\" y=\"30\" width=\"12\" height=\"12\"/><use href=\"#mt-leaf\" x=\"222\" y=\"62\" width=\"26\" height=\"39\" transform=\"rotate(40 235 82)\"/>\n        </svg>",
+  "<svg viewBox=\"0 0 260 170\" aria-hidden=\"true\">\n          <ellipse cx=\"140\" cy=\"92\" rx=\"110\" ry=\"70\" fill=\"url(#mt-bl)\"/>\n          <use href=\"#mt-cloud\" x=\"30\" y=\"20\" width=\"62\" height=\"28\" opacity=\".9\"/>\n          <g filter=\"url(#mt-sh)\"><path d=\"M70 138C44 138 40 100 68 94C66 62 110 50 128 76C146 46 196 62 190 100C216 100 220 138 194 138Z\" fill=\"url(#mt-gd)\"/></g>\n          <path d=\"M78 70C96 52 120 54 132 66\" stroke=\"#fff\" stroke-opacity=\".5\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>\n          <text x=\"128\" y=\"112\" font-family=\"Poppins,sans-serif\" font-weight=\"800\" font-size=\"40\" fill=\"#fff\" text-anchor=\"middle\">CO</text><text x=\"166\" y=\"120\" font-family=\"Poppins,sans-serif\" font-weight=\"700\" font-size=\"22\" fill=\"#fff\">2</text>\n          <path d=\"M206 134V108M224 134V92M242 134V70\" stroke=\"url(#mt-gb)\" stroke-width=\"11\" stroke-linecap=\"round\"/><path d=\"M204 96L224 76L244 52M236 52h10v10\" stroke=\"#0e9f8e\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n          <use href=\"#mt-leaf\" x=\"14\" y=\"104\" width=\"30\" height=\"45\" transform=\"rotate(-40 29 126)\"/><use href=\"#mt-leaf\" x=\"224\" y=\"140\" width=\"24\" height=\"36\" transform=\"rotate(50 236 158)\"/><use href=\"#mt-spark\" x=\"40\" y=\"60\" width=\"12\" height=\"12\"/>\n        </svg>",
+  "<svg viewBox=\"0 0 260 170\" aria-hidden=\"true\">\n          <ellipse cx=\"140\" cy=\"92\" rx=\"108\" ry=\"70\" fill=\"url(#mt-bl)\"/>\n          <g filter=\"url(#mt-sh)\"><rect x=\"52\" y=\"24\" width=\"168\" height=\"112\" rx=\"12\" fill=\"#fff\" stroke=\"#d6ebe3\"/></g>\n          <rect x=\"52\" y=\"24\" width=\"168\" height=\"16\" rx=\"8\" fill=\"url(#mt-gd)\"/>\n          <circle cx=\"112\" cy=\"92\" r=\"26\" fill=\"none\" stroke=\"#e4eef3\" stroke-width=\"14\"/><circle cx=\"112\" cy=\"92\" r=\"26\" fill=\"none\" stroke=\"#12a392\" stroke-width=\"14\" stroke-dasharray=\"78 90\" transform=\"rotate(-90 112 92)\"/><circle cx=\"112\" cy=\"92\" r=\"26\" fill=\"none\" stroke=\"#16a34a\" stroke-width=\"14\" stroke-dasharray=\"46 122\" stroke-dashoffset=\"-80\" transform=\"rotate(-90 112 92)\"/>\n          <path d=\"M160 118V96M176 118V82M192 118V70M208 118V88\" stroke=\"url(#mt-gb)\" stroke-width=\"10\" stroke-linecap=\"round\"/>\n          <path d=\"M150 124h62M70 52h40\" stroke=\"#d6ebe3\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n          <g filter=\"url(#mt-sh)\"><circle cx=\"214\" cy=\"132\" r=\"24\" fill=\"url(#mt-gd)\"/></g>\n          <path d=\"M214 132V112A20 20 0 0 1 233 138Z\" fill=\"#fff\"/><circle cx=\"214\" cy=\"132\" r=\"7\" fill=\"#12a392\"/>\n          <use href=\"#mt-leaf\" x=\"22\" y=\"92\" width=\"36\" height=\"54\" transform=\"rotate(-30 40 119)\"/><use href=\"#mt-leaf\" x=\"44\" y=\"116\" width=\"30\" height=\"45\" transform=\"rotate(14 59 138)\"/><use href=\"#mt-spark\" x=\"228\" y=\"28\" width=\"12\" height=\"12\"/>\n        </svg>",
+  "<svg viewBox=\"0 0 260 170\" aria-hidden=\"true\">\n          <ellipse cx=\"140\" cy=\"92\" rx=\"108\" ry=\"70\" fill=\"url(#mt-bl)\"/>\n          <g filter=\"url(#mt-sh)\"><rect x=\"118\" y=\"38\" width=\"112\" height=\"100\" rx=\"12\" fill=\"#fff\" stroke=\"#d6ebe3\"/></g>\n          <g fill=\"none\" stroke=\"#12a392\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M134 62l6 6 11-12\"/><path d=\"M134 90l6 6 11-12\"/><path d=\"M134 118l6 6 11-12\"/></g>\n          <path d=\"M164 60h50M164 72h34M164 88h50M164 100h34M164 116h50M164 128h30\" stroke=\"#d6ebe3\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n          <g filter=\"url(#mt-sh)\"><circle cx=\"80\" cy=\"76\" r=\"44\" fill=\"#f4fff9\" stroke=\"#bdecd6\" stroke-width=\"2\"/></g>\n          <circle cx=\"80\" cy=\"76\" r=\"44\" fill=\"url(#mt-bl)\"/>\n          <path d=\"M80 44C64 44 54 56 54 70c0 10 6 17 12 23v10h28V93c6-6 12-13 12-23 0-14-10-26-26-26Z\" fill=\"#fff\" stroke=\"#34c98a\" stroke-width=\"3\"/>\n          <path d=\"M70 112h20M72 120h16\" stroke=\"#34c98a\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n          <use href=\"#mt-leaf\" x=\"68\" y=\"54\" width=\"24\" height=\"36\" transform=\"rotate(12 80 72)\"/>\n          <path d=\"M80 94V78\" stroke=\"#16894a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <g stroke=\"#34c98a\" stroke-width=\"3\" stroke-linecap=\"round\"><path d=\"M80 24v8M40 40l6 6M120 40l-6 6M26 76h8M126 76h8\"/></g>\n          <use href=\"#mt-leaf\" x=\"14\" y=\"116\" width=\"30\" height=\"45\" transform=\"rotate(-40 29 138)\"/><use href=\"#mt-spark\" x=\"200\" y=\"14\" width=\"12\" height=\"12\"/>\n        </svg>",
+];
+
 const Methodology = () => (
   <section className="methodology-section" id="methodology">
+    <AboutArt html={MT_DEFS} className="mt-defs" />
+    <AboutArt html={MT_BG} className="mt-bgdeco" />
+
     <div className="container">
-      <SectionHeader label="Our Process" title="Assessment Methodology">
-        CarbonTrack leverages environmental frameworks established by the Intergovernmental Panel on Climate Change
-        (IPCC) and the EPA to guarantee analytical accuracy.
-      </SectionHeader>
+      <div className="section-header text-center">
+        <span className="section-label">Our Process</span>
+        <h2 className="section-title">
+          Assessment <span className="mt-accent">Methodology</span>
+        </h2>
+        <div className="title-bar"></div>
+        <p className="section-desc">
+          Code2Carbon leverages environmental frameworks established by the Intergovernmental Panel on Climate Change
+          (IPCC) and the EPA to guarantee analytical accuracy.
+        </p>
+      </div>
 
       <div className="timeline-container">
         <div className="timeline-line"></div>
@@ -1041,9 +1146,12 @@ const Methodology = () => (
               </Icon>
             </div>
             <div className="timeline-content card">
-              <span className="step-badge">Step 0{index + 1}</span>
-              <h3>{step.title}</h3>
-              <p>{step.desc}</p>
+              <div className="mt-txt">
+                <span className="step-badge">Step 0{index + 1}</span>
+                <h3>{step.title}</h3>
+                <p>{step.desc}</p>
+              </div>
+              <AboutArt html={MT_ART[index]} className="mt-art" />
             </div>
           </div>
         ))}
@@ -1066,9 +1174,16 @@ const Methodology = () => (
 const Features = () => (
   <section className="features-section" id="features">
     <div className="container">
-      <SectionHeader label="Platform Capabilities" title="Everything you need for institutional carbon accounting">
+      <div className="section-header text-center">
+        <span className="section-label">Platform Capabilities</span>
+        <h2 className="section-title">
+          Everything you need for institutional <span className="sec-accent">carbon accounting</span>
+        </h2>
+        <div className="title-bar"></div>
+        <p className="section-desc">
         Six purpose-built modules that cover the full lifecycle — from data ingestion to standards-aligned reporting.
-      </SectionHeader>
+      </p>
+      </div>
 
       <div className="grid grid-3">
         {FEATURES.map((feature) => (
@@ -1112,9 +1227,16 @@ const ShieldIllustration = () => (
 const Privacy = () => (
   <section className="privacy-section" id="privacy">
     <div className="container">
-      <SectionHeader label="Trust & Security" title="Institution-grade data governance">
+      <div className="section-header text-center">
+        <span className="section-label">Trust &amp; Security</span>
+        <h2 className="section-title">
+          Institution-grade <span className="sec-accent">data governance</span>
+        </h2>
+        <div className="title-bar"></div>
+        <p className="section-desc">
         Purpose-built controls that keep sensitive institutional data secure, auditable, and compliant.
-      </SectionHeader>
+      </p>
+      </div>
 
       <div className="privacy-grid glass-card scroll-reveal">
         <div className="privacy-graphic">
@@ -1256,7 +1378,7 @@ const Footer = () => (
 
       <div className="footer-bottom">
         <div>
-          &copy; 2026 CarbonTrack Platform. Developed for the Environmental Sciences Research Project. All rights
+          &copy; 2026 Code2Carbon Platform. Developed for the Environmental Sciences Research Project. All rights
           reserved.
         </div>
         <div className="footer-socials">

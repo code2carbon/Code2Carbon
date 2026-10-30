@@ -1,5 +1,5 @@
 /**
- * CarbonTrack - Institutional Carbon Footprint & Climate Accreditation Report Generator
+ * Code2Carbon - Institutional Carbon Footprint & Climate Accreditation Report Generator
  * Generates ISO 14064-1 & GHG Protocol Accredited Assessment Reports matching the SNJB reference report.
  * Features:
  *  - 100% Dynamic data model reading from calculator inputs
@@ -14,8 +14,8 @@
     'use strict';
 
     // Load Supabase credentials from centralized config (js/config.js)
-    const SUPABASE_URL = window.CARBONTRACK_CONFIG?.SUPABASE_URL || "";
-    const SUPABASE_ANON_KEY = window.CARBONTRACK_CONFIG?.SUPABASE_ANON_KEY || "";
+    const SUPABASE_URL = window.CODE2CARBON_CONFIG?.SUPABASE_URL || "";
+    const SUPABASE_ANON_KEY = window.CODE2CARBON_CONFIG?.SUPABASE_ANON_KEY || "";
 
     // Helper to format tree species display names
     function formatSpeciesName(slug) {
@@ -317,7 +317,7 @@
                 logoUrl: logoImgSrc,
                 photoUrl: photoImgSrc,
                 documentCode: `CT-SUST-GHG-${currentYr}-${Math.floor(1000 + Math.random() * 9000)}`,
-                executingAgency: `CarbonTrack Sustainability Assessment & Climate Accreditation Cell`,
+                executingAgency: `Code2Carbon Sustainability Assessment & Climate Accreditation Cell`,
                 reportDate: formattedReportDate
             },
             grossEmissionsKg,
@@ -406,7 +406,7 @@
         // Return Transparent Deterministic Fallback Engine
         return {
             isAIGenerated: false,
-            source: 'CarbonTrack Deterministic Environmental Analytics Engine (Supabase Edge Function not configured)',
+            source: 'Code2Carbon Deterministic Environmental Analytics Engine (Supabase Edge Function not configured)',
             insights: generateDeterministicInsights(model)
         };
     }
@@ -761,7 +761,7 @@
                     <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         <div style="border-top: 1px solid #000000; padding-top: 8px; text-align: center;">
                             <p style="margin: 2px 0; font-weight: bold; font-size: 0.88rem;">Lead Environmental Auditor</p>
-                            <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b;">CarbonTrack Sustainability Assessment Cell</p>
+                            <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b;">Code2Carbon Sustainability Assessment Cell</p>
                         </div>
                         <div style="border-top: 1px solid #000000; padding-top: 8px; text-align: center;">
                             <p style="margin: 2px 0; font-weight: bold; font-size: 0.88rem;">Head of Institution / Representative</p>
@@ -1979,7 +1979,7 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px;">
                             <div style="border-top: 1.5px solid #000000; padding-top: 8px; text-align: center;">
                                 <p style="margin: 2px 0; font-weight: bold; font-size: 0.88rem;">Certified Lead Environmental Auditor</p>
-                                <p style="margin: 2px 0; font-size: 0.78rem; color: #64748b;">CarbonTrack Sustainability Assessment Cell</p>
+                                <p style="margin: 2px 0; font-size: 0.78rem; color: #64748b;">Code2Carbon Sustainability Assessment Cell</p>
                             </div>
                             <div style="border-top: 1.5px solid #000000; padding-top: 8px; text-align: center;">
                                 <p style="margin: 2px 0; font-weight: bold; font-size: 0.88rem;">Authorized Signatory / Registrar</p>

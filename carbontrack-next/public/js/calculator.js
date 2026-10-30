@@ -1,8 +1,8 @@
 /* ==========================================================================
-   CarbonTrack Detailed Calculator Script
+   Code2Carbon Detailed Calculator Script
    ========================================================================== */
 
-function initCarbonTrackCalculator() {
+function initCode2CarbonCalculator() {
     const calculatorRoot = document.getElementById('energy-rows-container');
     if (!calculatorRoot || calculatorRoot.getAttribute('data-ct-calc-init') === '1') {
         return;
@@ -10,8 +10,8 @@ function initCarbonTrackCalculator() {
     calculatorRoot.setAttribute('data-ct-calc-init', '1');
 
     // Load Supabase credentials from centralized config (js/config.js)
-    const SUPABASE_URL = window.CARBONTRACK_CONFIG?.SUPABASE_URL || "";
-    const SUPABASE_ANON_KEY = window.CARBONTRACK_CONFIG?.SUPABASE_ANON_KEY || "";
+    const SUPABASE_URL = window.CODE2CARBON_CONFIG?.SUPABASE_URL || "";
+    const SUPABASE_ANON_KEY = window.CODE2CARBON_CONFIG?.SUPABASE_ANON_KEY || "";
 
     // Initialize Supabase Client
     let supabase = null;
@@ -1872,7 +1872,7 @@ function initCarbonTrackCalculator() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', initCarbonTrackCalculator);
+document.addEventListener('DOMContentLoaded', initCode2CarbonCalculator);
 if (document.readyState !== 'loading') {
-    initCarbonTrackCalculator();
+    initCode2CarbonCalculator();
 }
